@@ -1,0 +1,28 @@
+{
+  "name": "magnum-opus-messenger",
+  "version": "1.0.0",
+  "description": "A simple real-time  messenger app built on the MERN stack",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "keywords": [
+    "Live",
+    "Chats"
+  ],
+  "author": "Isaac Tsibu-Darko",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "concurrently": "^3.5.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.7",
+    "nodemon": "^2.0.7",
+    "pusher": "^5.0.0"
+  }
+}
