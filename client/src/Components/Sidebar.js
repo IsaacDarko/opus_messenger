@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import '../Styles/Sidebar.css';
 import { Avatar,IconButton } from '@material-ui/core';
 import  ChatIcon from '@material-ui/icons/Chat';
@@ -9,6 +10,9 @@ import SidebarChat from './SidebarChat';
 
 
 function Sidebar({ addNewChat }) {
+    useEffect(() => {
+        //something cool happens just wait and see
+    }, [])
     const createChat = () => {
         const newContact = prompt("Please enter contact name");
         if(newContact) {
