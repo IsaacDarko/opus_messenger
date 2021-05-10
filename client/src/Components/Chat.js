@@ -1,9 +1,25 @@
+import { useState } from 'react';
+import Messge from './Message';
 import '../Styles/Chat.css';
 import { Avatar, IconButton } from '@material-ui/core';
 import { AttachFile, MoreVert, SearchOutlined } from '@material-ui/icons';
+import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import React from 'react';
 
-function Chat() {
+function Chat() { 
+    const [input, setInput] = useState("");
+
+   // const addAttachment = () => {
+        //execute
+    //}
+
+    const sendMessage = (e) => {
+        e.preventDefault();
+        console.log(`you typed >>> ${input}`);
+        setInput("");
+    }
+
+
     return (
         <div className="chat">
 
@@ -21,6 +37,7 @@ function Chat() {
                     </IconButton>
                     <IconButton>
                         <AttachFile />
+                      
                     </IconButton>
                     <IconButton>
                         <MoreVert />
@@ -30,13 +47,16 @@ function Chat() {
 
 
             <div className="chat__body">
-                <p>
-                    <span className="chat__name">Sender</span>
-                    this is a message
-                    <span className="chat__timestamp">
-                        { new Date().toUTCString() }
-                    </span>
-                </p>
+               <Messge />
+            </div>
+
+            <div className="chat__footer">
+                <InsertEmoticonIcon />
+                <form>
+                    <input value={input} onChange={e => 
+                    setInput(e.target.value)} placeholder="type a message" type="text" />
+                    <button onClick={sendMessage} type="submit">Send Message</button>
+                </form>
             </div>
             
         </div>

@@ -59,5 +59,20 @@
 .sidebar__chats {
     flex: 1;
     background-color: white;
-    overflow: hidden;
+    overflow: scroll;
+    overflow-x: hidden;
+    border-radius:5px 5px; 
+}
+
+.sidebar__emptyChat {
+    height: inherit;
+    padding:20px;
+    align-items: center;
+}
+
+.empty__message {
+    font-size: 14px;
+    color: gray;
+    width: inherit;
+    text-align: center;
 }
