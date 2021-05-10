@@ -2,11 +2,12 @@
 const Express = require('express');
 const Mongoose = require('mongoose');
 const Pusher = require('pusher');
+const cors = require('cors');
 
 //initialising express
 const app = Express();
 
-//api health test for debugging during depoloyment
+//api health test for debugging during deployment
 app.get("/", (req, res)=> res.status(200).send("Hello there"));
 //setting up routes
 const userMessage = require('./routes/apis/usermessage');
@@ -16,6 +17,8 @@ const userMessage = require('./routes/apis/usermessage');
 //setting up the express in-built json parser
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: false }));
+//setting up headers using cors package
+app.use(cors());
 
 
 //retrieving database keys and configs
@@ -27,25 +30,36 @@ const pusher = new Pusher({
     cluster: "mt1",
     useTLS: true
   });
-//setting up change stream to activate live database
-const dbStream = Mongoose.connection
-dbStream.once("open", ()=>{
-    const msgCollection = dbStream.collection("usermessages");
-    const changeStream = msgCollection.watch();
-
-    changeStream.on("change", (change) => {
-        console.log(change);
-    })
-
-    console.log("MongoDB data stream open");
-})
-
+  
 
 //connecting to the MongoDB atlas cloud
 Mongoose
     .connect(db, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(()=> console.log('MongoDB connected...'))
     .catch(err => console.log(err));
+
+
+//setting up change stream to activate Mongo-live-database
+const dbStream = Mongoose.connection
+dbStream.once("open", ()=>{
+    const msgCollection = dbStream.collection("usermessages");
+    const changeStream = msgCollection.watch();
+    console.log("MongoDB data stream open");
+
+    if(changeStream.operationType === 'insert'){
+        const messageDetails = change.fullDocument;
+        pusher.trigger('messages', 'inserted', {
+            name: messageDetails.username,
+            message: messageDetails.usermessage
+        })
+    }else{
+        console.log("Pusher was not triggered")
+    }
+
+    changeStream.on("change", (change) => {
+        console.log(change);
+    })
+})
 
 
 //Use routes
