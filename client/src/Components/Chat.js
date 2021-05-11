@@ -1,26 +1,33 @@
 import { useState } from 'react';
-import Messge from './Message';
 import '../Styles/Chat.css';
 import { Avatar, IconButton } from '@material-ui/core';
 import { AttachFile, MoreVert, SearchOutlined } from '@material-ui/icons';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import React from 'react';
+import axios from '../axios';
 
-function Chat() { 
+function Chat({ messages }) { 
     const [input, setInput] = useState("");
 
    // const addAttachment = () => {
         //execute
     //}
 
-    const sendMessage = (e) => {
+    const sendMessage = (e) => { 
         e.preventDefault();
-        console.log(`you typed >>> ${input}`);
+        axios.post('/api/messages', {
+            usermessage: input,
+            username:"" ,
+            userid:"6000",
+            chatid:"6099e759c2fc4a3398bf69c8",
+            sent: true
+        });
         setInput("");
     }
 
 
     return (
+        
         <div className="chat">
 
             <div className="chat__header">
@@ -47,8 +54,20 @@ function Chat() {
 
 
             <div className="chat__body">
-               <Messge />
+                {messages.map((message) => (
+                    <div className="message__container">
+                        <p className={`chat__message ${message.sent === true && 'sender__myself'}`}>
+                            <span className="chat__name">{message.username}</span>
+                                {message.usermessage}
+                            <span className="chat__timestamp">
+                                { message.timestamp }
+                            </span>
+                        </p>                        
+                    </div>
+                ))}
+                
             </div>
+
 
             <div className="chat__footer">
                 <InsertEmoticonIcon />

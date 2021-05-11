@@ -1,0 +1,13 @@
+.button__wrapper {
+    display: grid;
+    height: 50vh;
+    width: 25vw;
+    background-color: rgba(239, 243, 217, 0.26);
+    place-content: center;
+    box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.7);
+    margin: auto;
+}
+
+.button__wrapper > button{
+    
+}

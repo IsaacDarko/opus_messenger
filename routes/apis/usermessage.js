@@ -22,7 +22,9 @@ router.post('/', (req, res)=>{
     const newUserMessage = new UserMessage({
         usermessage: req.body.usermessage,
         username: req.body.username,
-        received: req.body.received
+        userid: req.body.userid,
+        chatid: req.body.chatid,
+        sent: req.body.sent
     });
     newUserMessage.save()
     .then(usermessage => {res.status(201).json(usermessage)

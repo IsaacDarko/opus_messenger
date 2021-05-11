@@ -14,9 +14,13 @@ const UserMessageSchema = new Schema({
     },
     userid:{
         type: String,
-        required: false
+        required: true
     },
-    received:{
+    chatid:{
+        type: String,
+        required: true
+    },
+    sent:{
         type: Boolean,
         required: true
     },

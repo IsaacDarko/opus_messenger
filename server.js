@@ -57,7 +57,7 @@ dbStream.once("open", ()=>{
 
         if(change.operationType === 'insert'){
             const messageDetails = change.fullDocument;
-            pusher.trigger('messages', 'inserted', {
+            pusher.trigger(['messages', 'chats'], 'inserted', {
                 name: messageDetails.username,
                 message: messageDetails.usermessage
             })
