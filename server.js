@@ -10,8 +10,9 @@ const app = Express();
 //api health test for debugging during deployment
 app.get("/", (req, res)=> res.status(200).send("Hello there"));
 //setting up routes
-const userMessage = require('./routes/apis/usermessage');
-
+const userMessages = require('./routes/apis/usermessage');
+const userChats = require('./routes/apis/chats.js');
+const users = require('./routes/apis/users');
 
 //middleware
 //setting up the express in-built json parser
@@ -20,6 +21,10 @@ app.use(Express.urlencoded({ extended: false }));
 //setting up headers using cors package
 app.use(cors());
 
+//use routes
+app.use('/api/messages', userMessages);
+app.use('/api/chats', userChats);
+app.use('/api/users', users);
 
 //retrieving database keys and configs
 const db = require('./config/keys').mongoURI;
@@ -46,24 +51,24 @@ dbStream.once("open", ()=>{
     const changeStream = msgCollection.watch();
     console.log("MongoDB data stream open");
 
-    if(changeStream.operationType === 'insert'){
-        const messageDetails = change.fullDocument;
-        pusher.trigger('messages', 'inserted', {
-            name: messageDetails.username,
-            message: messageDetails.usermessage
-        })
-    }else{
-        console.log("Pusher was not triggered")
-    }
-
+    
     changeStream.on("change", (change) => {
         console.log(change);
+
+        if(change.operationType === 'insert'){
+            const messageDetails = change.fullDocument;
+            pusher.trigger('messages', 'inserted', {
+                name: messageDetails.username,
+                message: messageDetails.usermessage
+            })
+        }else{
+            console.log("Pusher was not triggered")
+        }
+    
     })
 })
 
 
-//Use routes
-app.use('/api/usermessage', userMessage);
 
 //assign listening port
 const port = process.env.PORT || 5000;

@@ -25,7 +25,9 @@ router.post('/', (req, res)=>{
         received: req.body.received
     });
     newUserMessage.save()
-    .then(usermessage => res.status(201).json(usermessage))
+    .then(usermessage => {res.status(201).json(usermessage)
+    console.log("data inserted successfully");
+    })
     .catch(err => res.status(404).json({success: false}));
 });
 
