@@ -27,6 +27,7 @@ function App() {
     axios.get('/api/messages/sync')
     .then( response => {
       setMessages(response.data);
+      console.log(messages);
     })
   }, []);
 
@@ -37,7 +38,6 @@ function App() {
 
     const channel = pusher.subscribe('messages');
     channel.bind('inserted', function(newMessage) {
-      alert(JSON.stringify(newMessage));
       setMessages([...messages, newMessage])
   });
 
@@ -56,23 +56,6 @@ function App() {
     })
   }, []);
 
-  useEffect(() =>{
-    const pusher = new Pusher('0d81b56dcdff3b8a813c', {
-      cluster: 'mt1'
-    });
-
-    const channel = pusher.subscribe('chats');
-    channel.bind('inserted', function(newChat) {
-      alert(JSON.stringify(newChat));
-      setChats([...chats, newChat])
-  });
-
-  return () => {
-    channel.unbind_all();
-    channel.unsubscribe();
-  }
-
-},[chats]);
 
 console.log(messages);
 console.log(chats);
@@ -82,9 +65,9 @@ console.log(chats);
     //using the BEM naming convention
     <div className="app">
       <div className="app__body"> 
-          <Sidebar chats={chats} addNewChat/>
+          <Sidebar chats={chats} user={user} addNewChat/>
 
-          <Chat messages={messages} />
+          <Chat messages={messages} user={user} />
 
       </div>
 

@@ -5,7 +5,7 @@ const router = Express.Router();
 //retrieving model
 const UserMessage = require('../../models/UserMessage');
 
-//@route  GET api/usermessage/sync
+//@route  GET api/messages/sync
 //@descr  Gets all user messages
 //@access Private
 router.get('/sync', (req, res)=>{
@@ -15,7 +15,16 @@ router.get('/sync', (req, res)=>{
     .catch(err => res.status(404).json({success: false}));
 });
 
-//@route  POST api/usermessage
+
+//@route  GET api/messages/chat
+//@descr  Gets all messages in a particular chat
+//@access Private
+router.get('/chat', (req, res)=>{
+    
+})
+
+
+//@route  POST api/messages/
 //@descr  Post a user message
 //@access Private
 router.post('/', (req, res)=>{
@@ -33,7 +42,7 @@ router.post('/', (req, res)=>{
     .catch(err => res.status(404).json({success: false}));
 });
 
-//@route  DELETE api/usermessage/:id
+//@route  DELETE api/messages/:id
 //@descr  Deletes a user message
 //@access Private
 router.delete('/:id', (req, res)=>{

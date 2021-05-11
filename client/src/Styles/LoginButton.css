@@ -9,5 +9,10 @@
 }
 
 .button__wrapper > button{
-    
+    width:20vw;
+    height:5vh;
+    box-shadow: -1px 2px 10px -3px rgba(0,0,0,0.7);
+    border-radius:10px;
+    cursor:pointer;
+    background-image: url("https://digitalsynopsis.com/wp-content/uploads/2017/07/beautiful-color-ui-gradients-backgrounds-endless-river.png");
 }

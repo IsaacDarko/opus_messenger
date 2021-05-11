@@ -1,24 +1,21 @@
 import { useState } from 'react';
 import '../Styles/Chat.css';
 import { Avatar, IconButton } from '@material-ui/core';
-import { AttachFile, MoreVert, SearchOutlined } from '@material-ui/icons';
+import { AttachFile, SearchOutlined } from '@material-ui/icons';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import React from 'react';
 import axios from '../axios';
+import LogoutButton from './LogoutButton';
 
-function Chat({ messages }) { 
+function Chat({ messages, user }) { 
     const [input, setInput] = useState("");
-
-   // const addAttachment = () => {
-        //execute
-    //}
-
+    console.log(messages)
     const sendMessage = (e) => { 
         e.preventDefault();
         axios.post('/api/messages', {
             usermessage: input,
-            username:"" ,
-            userid:"6000",
+            username: user.name ,
+            userid:user.email,
             chatid:"6099e759c2fc4a3398bf69c8",
             sent: true
         });
@@ -46,9 +43,7 @@ function Chat({ messages }) {
                         <AttachFile />
                       
                     </IconButton>
-                    <IconButton>
-                        <MoreVert />
-                    </IconButton>
+                    <LogoutButton /> 
                 </div>
             </div>
 
