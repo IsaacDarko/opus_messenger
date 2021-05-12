@@ -16,11 +16,20 @@ router.get('/sync', (req, res)=>{
 });
 
 
-//@route  GET api/messages/chat
+//@route  GET api/messages/chats/:id
 //@descr  Gets all messages in a particular chat
 //@access Private
-router.get('/chat', (req, res)=>{
-    
+router.get('/chat/:id', (req, res)=>{
+    const id =  req.params.id;
+    console.log(id);
+    UserMessage.find({
+        chatid:id
+    })
+    .then(chatmessages => res.status(200).json(chatmessages))
+    .catch(err=> {
+        console.log(err);
+        res.status(400).json("Sorry that was bad request")
+    })
 })
 
 

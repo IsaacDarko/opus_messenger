@@ -1,33 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import { Switch } from 'react-router-dom';
 import Chat from './Components/Chat';
 import Sidebar from './Components/Sidebar';
-import LoginButton from './Components/LoginButton';
 import Pusher from "pusher-js";
 import axios from './axios';
 
 import { useAuth0 } from '@auth0/auth0-react'
+import ProtectedRoute from './auth/protected-route';
 
 function App() {
   const { user } = useAuth0();
-  const [ current, setCurrent ] = useState();
+  const [chatId, setChatId] = useState();
   const [ chats, setChats ] = useState([]);
   const [ messages, setMessages ] = useState([]);
 
   
+  const fetchChat = () => {
+    setMessages([]);
+    const chatid = JSON.stringify(localStorage.getItem('chatid'));
+    const id = JSON.parse(chatid) 
+    console.log(chatid);
+    axios.get(`/api/messages/chat/${id}`)
+    .then(response => {
+      console.log(response);
+      const data = response.data
+      console.log(data);
+      setMessages(data);
+      setChatId(id);
+      console.log(messages);
+    })
+  }
 
-  useEffect( () => {
-    const iscurrent = localStorage.getItem('current');
-    console.log(iscurrent);
-    if(user){
-      setCurrent(user)
-      localStorage.setItem('user', JSON.stringify(user))
-    }else{
-      setCurrent();
+  const addNewChat = () => {
 
-    }
-  },[user, current])
+  }
 
+
+{/*}
   useEffect(() => {
     axios.get('/api/messages/sync')
     .then( response => {
@@ -53,7 +63,7 @@ function App() {
   }
 
 },[messages]);
-
+*/}
 
   useEffect(() =>{
     axios.get('/api/chats/sync')
@@ -61,31 +71,26 @@ function App() {
       setChats(response.data);
     })
   }, []);
+  
 
-
-console.log(messages);
-console.log(chats);
-
-
-  return current ? (
+  return (
     //using the BEM naming convention
     <div className="app">
+
       <div className="app__body"> 
-          <Sidebar chats={chats} user={user} addNewChat/>
+             
+            <Switch>
 
-          <Chat messages={messages} user={user} />
-
+              <ProtectedRoute exact path="/" component={Chat}>
+                <Sidebar chats={chats} user={user} addNewChat={addNewChat} fetchChat={fetchChat} />
+                <Chat messages={messages} user={user} chats={chats} chatId={chatId} />
+              </ProtectedRoute>
+              
+            </Switch>
+        
       </div>
-
 
     </div>  
-  ):(
-    <div className="app">
-      <div className="app__body"> 
-          <LoginButton />
-      </div>
-    </div> 
-  )
-}
+  )}
 
 export default App;

@@ -5,17 +5,24 @@ import { AttachFile, SearchOutlined } from '@material-ui/icons';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import React from 'react';
 import axios from '../axios';
-import LogoutButton from './LogoutButton';
+import AuthNav from './auth-nav';
+import Loading from './Loading';
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
-function Chat({ messages, user }) { 
+function Chat({ messages, chatId }) { 
+    const { user } = useAuth0();
+    const { name, sub } = user;
+
     const [input, setInput] = useState("");
-    console.log(messages)
+
+    console.log(messages);
+
     const sendMessage = (e) => { 
         e.preventDefault();
         axios.post('/api/messages', {
             usermessage: input,
-            username: user.name ,
-            userid:user.email,
+            username:name ,
+            userid: sub,
             chatid:"6099e759c2fc4a3398bf69c8",
             sent: true
         });
@@ -23,7 +30,7 @@ function Chat({ messages, user }) {
     }
 
 
-    return (
+    return chatId ? (
         
         <div className="chat">
 
@@ -40,11 +47,11 @@ function Chat({ messages, user }) {
                         <SearchOutlined />
                     </IconButton>
                     <IconButton>
-                        <AttachFile />
-                      
+                        <AttachFile />                      
                     </IconButton>
-                    <LogoutButton /> 
+                    <AuthNav />
                 </div>
+                
             </div>
 
 
@@ -74,7 +81,48 @@ function Chat({ messages, user }) {
             </div>
             
         </div>
+    ):(
+
+        <div className="chat">
+            <div className="chat__header">
+                <Avatar />
+
+                <div className="chat__headerInfo">
+                    <h3>Contact Name</h3>
+                    <p>Last Seen Online....</p>
+                </div>
+
+                <div className="chat__headerRight">
+                    <IconButton>
+                        <SearchOutlined />
+                    </IconButton>
+                    <IconButton>
+                        <AttachFile />                      
+                    </IconButton>
+                    <AuthNav />
+                </div>
+                
+            </div>
+
+
+            <div className="chat__body">
+                <h4>Select an existing conversation or start A New on</h4>
+            </div>
+
+
+            <div className="chat__footer">
+                <InsertEmoticonIcon />
+                <form>
+                    <input value={input} onChange={e => 
+                    setInput(e.target.value)} placeholder="type a message" type="text" />
+                    <button onClick={sendMessage} type="submit">Send Message</button>
+                </form>
+            </div>
+
+            </div>
     )
 }
 
-export default Chat
+export default withAuthenticationRequired(Chat, {
+    onRedirecting: () => <Loading />,
+  });

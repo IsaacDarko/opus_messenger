@@ -8,16 +8,19 @@ import  SearchOutlined from '@material-ui/icons/SearchOutlined';
 import  MoreVertIcon from '@material-ui/icons/MoreVert';
 
 
-function Sidebar({ chats }) {
+function Sidebar({ chatId, chats, fetchChat }) {
+    const [chatid, setChatid] = useState();
     const [seed, setSeed] = useState('');
     useEffect(() =>{
         setSeed(Math.floor(Math.random()*5000));
     }, []);
 
-
-    useEffect(() => {
-        //something cool happens just wait and see
-    }, []);
+    const secureChatId = () => {
+        console.log("hover detected");
+        const exprtdChatId = localStorage.setItem('chatid', chatid);
+        console.log(JSON.stringify(exprtdChatId));
+        fetchChat(exprtdChatId);
+    }
 
 
     const addNewChat = () => {
@@ -57,7 +60,11 @@ function Sidebar({ chats }) {
 
             <div className="sidebar__chats">
               {chats.map((chat) => (
-                <div className="sidebarChat">
+                <div className="sidebarChat" id={chat._id} onClick={ (e) => {                    
+                    setChatid(e.target.id);
+                    secureChatId();
+                     }
+                }>
             
                     <div className="sidebarChat__left">
                         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>

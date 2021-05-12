@@ -35,6 +35,11 @@
     overflow: scroll;
 }
 
+.chat__body > h4 {
+    color: azure;
+    margin: auto;
+}
+
 .chat__message {
     position: relative;
     font-size: 16px;
