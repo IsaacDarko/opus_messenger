@@ -8,23 +8,26 @@ import  SearchOutlined from '@material-ui/icons/SearchOutlined';
 import  MoreVertIcon from '@material-ui/icons/MoreVert';
 
 
-function Sidebar({ addNewChat, chats }) {
+function Sidebar({ chats }) {
     const [seed, setSeed] = useState('');
     useEffect(() =>{
         setSeed(Math.floor(Math.random()*5000));
-    }, [])
+    }, []);
 
 
     useEffect(() => {
         //something cool happens just wait and see
-    }, [])
-    const createChat = () => {
+    }, []);
+
+
+    const addNewChat = () => {
         const newContact = prompt("Please enter contact name");
         if(newContact) {
             //perform some database magic
         }
     }
 
+    
 
     return chats ? (
         <div className="sidebar">
@@ -32,7 +35,7 @@ function Sidebar({ addNewChat, chats }) {
                 <Avatar />
                 <div className="sidebar__headerRight">
                     <IconButton>
-                        <ChatIcon />
+                        <ChatIcon onClick={ () => addNewChat() } />
                     </IconButton>
                     <IconButton>
                         <MoreVertIcon />
@@ -74,7 +77,7 @@ function Sidebar({ addNewChat, chats }) {
             <div className="sidebar__header">
                 <Avatar />
                 <div className="sidebar__headerRight">
-                    <IconButton onClick={createChat}>
+                    <IconButton onClick={addNewChat} >
                         <ChatIcon />
                     </IconButton>
                     <IconButton>

@@ -14,12 +14,17 @@ function App() {
   const [ chats, setChats ] = useState([]);
   const [ messages, setMessages ] = useState([]);
 
+  
+
   useEffect( () => {
-    console.log(user);
+    const iscurrent = localStorage.getItem('current');
+    console.log(iscurrent);
     if(user){
       setCurrent(user)
+      localStorage.setItem('user', JSON.stringify(user))
     }else{
-      setCurrent()
+      setCurrent();
+
     }
   },[user, current])
 
@@ -29,7 +34,7 @@ function App() {
       setMessages(response.data);
       console.log(messages);
     })
-  }, []);
+  }, [messages]);
 
   useEffect(() =>{
     const pusher = new Pusher('0d81b56dcdff3b8a813c', {
@@ -39,6 +44,7 @@ function App() {
     const channel = pusher.subscribe('messages');
     channel.bind('inserted', function(newMessage) {
       setMessages([...messages, newMessage])
+      alert(JSON.stringify(newMessage));
   });
 
   return () => {
