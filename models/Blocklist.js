@@ -3,46 +3,44 @@ const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
 //set up schema using mongoose schema method
-const ChatsSchema = new Schema({
-    recpt_id:{
+const BlocklistSchema = new Schema({
+    blocker_id:{
         type: String,
         required: true,
-
+        unique: true
     },
-    recpt_name:{
+    blocker_name:{
         type: String,
         required: true
     },
-    sndrs_id:{
-        type: String,
-        required: true
-    },
-    sndrs_name:{
+    blockee_id:{
         type: String,
         required: true,
     },
-    recpt_mail:{
-        type: String,
-        required: true
-    },
-    sndrs_mail:{
-        type: String,
-        required: true
-    },
-    recptdispName:{
+    blockee_name:{
         type: String,
         required: true,
     },
-    sndrsdispName:{
+    blocker_mail:{
+        type: String,
+        required: true,
+        unique: true
+    },
+    blockee_mail:{
+        type: String,
+        required: true,
+        unique: true
+    },
+    blockerdispName:{
         type: String,
         required: true,
     },
-    last_msge:{
+    blockeedispName:{
         type: String,
-        required: false
+        required: true,
     },
-    msges_num:{
-        type: Number,
+    reason:{
+        type: String,
         required: false
     },
     strt_time: {
@@ -52,4 +50,4 @@ const ChatsSchema = new Schema({
 });
 
 //declare module exports and create collection
-module.exports = Chats = Mongoose.model('chats', ChatsSchema);
+module.exports = Blocklist = Mongoose.model('blocklist', BlocklistSchema);

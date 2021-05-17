@@ -16,6 +16,8 @@ app.use(Express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(jwtCheck);
 
+
+
 //@route  GET api/messages/sync
 //@descr  Gets all user messages
 //@access Private
@@ -25,6 +27,19 @@ router.get('/sync', (req, res)=>{
     .then(usermessages => res.json(usermessages))
     .catch(err => res.status(404).json({success: false}));
 });
+
+
+//@route  GET api/messages/:id
+//@descr  Gets all messages for a particular user
+//@access Private
+router.get('/:id', (req, res)=>{ 
+    UserMessage.find()
+    .sort({date: 1})
+    .then(usermessages => res.json(usermessages))
+    .catch(err => res.status(404).json({success: false}));
+});
+
+
 
 
 //@route  GET api/messages/chats/:id
@@ -48,6 +63,10 @@ router.get('/chat/:id', (req, res)=>{
 })
 
 
+
+
+
+
 //@route  POST api/messages/
 //@descr  Post a user message
 //@access Private
@@ -66,9 +85,10 @@ router.post('/', (req, res)=>{
     newUserMessage.save()
     .then(usermessage => {res.status(201).json(usermessage)
     console.log("data inserted successfully");
-    })
-    //.catch(err => res.status(404).json({success: false}));
+    }).catch(err => res.status(404).json({success: false}));
 });
+
+
 
 //@route  DELETE api/messages/:id
 //@descr  Deletes a user message

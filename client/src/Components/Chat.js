@@ -13,6 +13,7 @@ import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 const Chat = (props) => { 
     const { messages, setMessages } = props;
     const { user } = useAuth0();
+    const getMyId = localStorage.setItem('user', JSON.stringify(user));
     console.log(user);
     const { name, sub } = user;
     console.log(messages);
@@ -119,7 +120,7 @@ const Chat = (props) => {
                         {messages.map((message) => (
                             <div className="message__container" key={message._id}>
                                 <p className={`chat__message ${user.name === message.sendername && 'sender__myself'}`}>
-                                    <span className="chat__name">{message.name}</span>
+                                    <span className="chat__name">{message.sendername}</span>
                                         {message.message}
                                     <span className="chat__timestamp">
                                         { message.timestamp }

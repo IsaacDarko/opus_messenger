@@ -6,8 +6,7 @@ import Sidebar from './Components/Sidebar';
 import StartChatModal from './Components/StartChatModal';
 import Pusher from "pusher-js";
 import axios from './axios';
-
-import { useAuth0 } from '@auth0/auth0-react'
+import { useAuth0, User } from '@auth0/auth0-react'
 import ProtectedRoute from './auth/protected-route';
 
 function App() {
@@ -19,19 +18,41 @@ function App() {
   const [chatId, setChatId] = useState();
   const [ chats, setChats ] = useState([]);
   const [ messages, setMessages ] = useState([]);
+  const [ loggedInUser, setLoggedInUser ] = useState({});
+
+  useEffect(()=>{
+    if(user === undefined || user === []){  
+      setLoggedInUser(user);    
+    }else{
+      localStorage.setItem('user', JSON.stringify(user))
+      console.log(user);
+      retrieveUsersChats()
+    }    
+  }, [useAuth0, user]);
 
 
 
-  const retrieveMessages = () =>{
-    axios.get('api/messages/sync')
+  const retrieveUsersMessages = () =>{
+    const myself = user
+    console.log(myself)
+    const id = myself.name;
+    console.log(id);
+    axios.get('api/messages/:id')
     .then(res =>{
       console.log(res.data);
       setMessages(res.data)
     }).catch(err => console.log(`there was an API Error ${err}`));
   }
 
-  const retrieveChats = () =>{
-    axios.get('api/chats/sync')
+
+
+
+  const retrieveUsersChats = () =>{
+    const myself = user
+    console.log(myself)
+    const id = myself.name;
+    console.log(id);
+    axios.get(`api/chats/chat/${id}`)
     .then(res =>{
       console.log(res.data);
       setChats(res.data)
@@ -44,6 +65,21 @@ function App() {
     setShow(null);
   }
 
+
+  const blockUser = () => {
+    const userid = localStorage.get('myblockee');
+    const options = {
+      id: userid
+    }
+    axios.post('api/users/block/:id', {
+      options
+    }).then((res)=>{
+      console.log(res)
+    })
+
+
+
+  }
 /*
   const syncMessagesSecurely = async () => {
     try {
@@ -112,16 +148,21 @@ function App() {
       console.log('No chat id was detected')
     }    
   }
-  
-  
+
+
 
   const addNewChat = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(user)
+    const { sub } = user;
+    console.log(sub);
       axios.get('api/users/sync')
       .then(res => {
         console.log(res.data);
         setContactlist(res.data); 
       })
   }
+
 
 
   const selectUser = () =>{
@@ -156,6 +197,27 @@ function App() {
   }
 
 
+  useEffect(() =>{
+    const pusher = new Pusher('0d81b56dcdff3b8a813c', {
+      cluster: 'mt1'
+    });
+
+    const channel = pusher.subscribe('chats');
+    channel.bind('inserted', function(newChat) {
+      setChats([...messages, newChat]);      
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    }
+
+  },[chats]);
+
+
+
+
+
 
   useEffect(() =>{
     const pusher = new Pusher('0d81b56dcdff3b8a813c', {
@@ -174,14 +236,6 @@ function App() {
 
   },[messages]);
 
-
-
-  useEffect(()=>{
-    retrieveChats()
-    retrieveMessages()
-  }, [])
-
-
   console.log(messages);
   
 
@@ -198,7 +252,7 @@ function App() {
               <ProtectedRoute exact path="/" component={Chat}>
 
                 <StartChatModal contactlist={contactlist} show={show} setShow={setShow} switchOff={switchOff} selectUser={selectUser} />
-                <Sidebar chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
+                <Sidebar  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
                 <Chat messages={messages} user={user} chats={chats} chatId={chatId} setMessages={setMessages} />
                 
               </ProtectedRoute>

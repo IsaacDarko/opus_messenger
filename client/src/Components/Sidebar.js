@@ -7,15 +7,22 @@ import  ChatIcon from '@material-ui/icons/Chat';
 import  SearchOutlined from '@material-ui/icons/SearchOutlined';
 import  MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
+import BlockIcon from '@material-ui/icons/Block';
 
 
-function Sidebar({ setShow, chats, fetchChat, addNewChat, deleteNow, gotId, setGotId }) {
+function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, deleteNow, gotId, setGotId }) {
     const [chatid, setChatid] = useState('');
     const [ currUserId, setCurrUserId ] = useState('');
     const [ currUserName, setCurrUserName ] = useState('');
     const [ currUserDisp, setCurrUserDisp ] = useState('');
     const [ currUserMail, setCurrUserMail ] = useState('');
     const [seed, setSeed] = useState('');
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(user);
+
+    const { picture } = user;
+
 
     const signalModal = () => {
         setShow(true);
@@ -61,7 +68,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, deleteNow, gotId, setG
     return chats ? (
         <div className="sidebar">
             <div className="sidebar__header">
-                <Avatar />
+                <Avatar src={picture}/>
                 <div className="sidebar__headerRight">
                     <IconButton>
                         <ChatIcon onClick={() => signalModal()} />
@@ -105,11 +112,13 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, deleteNow, gotId, setG
                     </div>
 
                     <div className="sidebarChat__right">
-                            <span className="delete__Chat" ><DeleteIcon onClick={ () => {
-
+                            <span className="chat__trash" ><DeleteIcon onClick={ () => {
+                            
                             }}  
-                            /></span>                        
-                    </div>
+                            /></span> 
+                            <span className="chat__block"> < BlockIcon onClick={() =>  blockUser} /> </span>
+
+                    </div> 
                     
                 </div>
             ))}   
