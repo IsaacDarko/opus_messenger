@@ -1,36 +1,62 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import '../Styles/Sidebar.css';
 import '../Styles/SidebarChat.css'
 import { Avatar,IconButton } from '@material-ui/core';
 import  ChatIcon from '@material-ui/icons/Chat';
 import  SearchOutlined from '@material-ui/icons/SearchOutlined';
 import  MoreVertIcon from '@material-ui/icons/MoreVert';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
-function Sidebar({ chatId, chats, fetchChat }) {
-    const [chatid, setChatid] = useState();
+function Sidebar({ setShow, chats, fetchChat, addNewChat, deleteNow, gotId, setGotId }) {
+    const [chatid, setChatid] = useState('');
+    const [ currUserId, setCurrUserId ] = useState('');
+    const [ currUserName, setCurrUserName ] = useState('');
+    const [ currUserDisp, setCurrUserDisp ] = useState('');
+    const [ currUserMail, setCurrUserMail ] = useState('');
     const [seed, setSeed] = useState('');
+
+    const signalModal = () => {
+        setShow(true);
+        addNewChat()
+    }
+
     useEffect(() =>{
-        setSeed(Math.floor(Math.random()*5000));
-    }, []);
-
-    const secureChatId = () => {
-        console.log("hover detected");
-        const exprtdChatId = localStorage.setItem('chatid', chatid);
-        console.log(JSON.stringify(exprtdChatId));
-        fetchChat(exprtdChatId);
-    }
+        setSeed(Math.floor(Math.random()*219));
+    }, [chats]);
 
 
-    const addNewChat = () => {
-        const newContact = prompt("Please enter contact name");
-        if(newContact) {
-            //perform some database magic
-        }
-    }
 
-    
+    const secureChatId = useCallback(() => {
+        const prevChatId = localStorage.getItem('chatid');
+        console.log(prevChatId);
+        const currChatId = chatid;
+        localStorage.removeItem('chatid');
+        const interrim = localStorage.getItem('chatid ');
+        console.log(interrim);
+        localStorage.setItem('chatid', JSON.stringify(currChatId));
+        const localChatId = localStorage.getItem('chatid');
+        console.log(localChatId)
+        console.log(`saved ${chatid} to localStorage`);
+        fetchChat(); 
+        
+        const currentUser = {
+            userid: currUserId,
+            name: currUserName,
+            displayname: currUserDisp,
+            mail: currUserMail
+        };
+
+        const current = localStorage.setItem('currentUser', JSON.stringify(currentUser))  
+        console.log(current);
+    })
+
+
+
+
+
+
 
     return chats ? (
         <div className="sidebar">
@@ -38,12 +64,12 @@ function Sidebar({ chatId, chats, fetchChat }) {
                 <Avatar />
                 <div className="sidebar__headerRight">
                     <IconButton>
-                        <ChatIcon onClick={ () => addNewChat() } />
+                        <ChatIcon onClick={() => signalModal()} />
                     </IconButton>
                     <IconButton>
                         <MoreVertIcon />
                     </IconButton>
-                   
+
                 </div>
 
             </div>
@@ -59,12 +85,15 @@ function Sidebar({ chatId, chats, fetchChat }) {
             </div>
 
             <div className="sidebar__chats">
-              {chats.map((chat) => (
-                <div className="sidebarChat" id={chat._id} onClick={ (e) => {                    
+            {chats.map((chat) => (
+                <div className="sidebarChat" value={chatid} id={chat._id} onClick={ (e) => {                
                     setChatid(e.target.id);
-                    secureChatId();
-                     }
-                }>
+                    setCurrUserId(chat.recpt_id)
+                    setCurrUserName(chat.recpt_name)
+                    setCurrUserDisp(chat.recptdispName)
+                    setCurrUserMail(chat.recpt_mail)
+                    setTimeout(secureChatId(),5000);
+                }}>
             
                     <div className="sidebarChat__left">
                         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
@@ -74,9 +103,16 @@ function Sidebar({ chatId, chats, fetchChat }) {
                         <h2>{chat.disp_name}</h2>
                         <p>{chat.last_msge}</p>
                     </div>
+
+                    <div className="sidebarChat__right">
+                            <span className="delete__Chat" ><DeleteIcon onClick={ () => {
+
+                            }}  
+                            /></span>                        
+                    </div>
                     
                 </div>
-              ))}   
+            ))}   
             </div>
         </div>
     ) : (
@@ -84,13 +120,13 @@ function Sidebar({ chatId, chats, fetchChat }) {
             <div className="sidebar__header">
                 <Avatar />
                 <div className="sidebar__headerRight">
-                    <IconButton onClick={addNewChat} >
-                        <ChatIcon />
+                    <IconButton >
+                        <ChatIcon onClick={() => signalModal()} />
                     </IconButton>
                     <IconButton>
                         <MoreVertIcon />
                     </IconButton>
-                   
+                
                 </div>
 
             </div>

@@ -94,5 +94,14 @@
 }
 
 .chat__footer > form > button {
-    display: none;
+    border-radius: 20px;
+    margin-right: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-width: 1px;
+    background-color: rgb(125, 240, 255);
+}
+
+.chat__footer > form > button > .MuiSvgIcon-root {
+    color:white;
 }

@@ -4,25 +4,33 @@ const Schema = Mongoose.Schema;
 
 //set up schema using mongoose schema method
 const UserMessageSchema = new Schema({
-    usermessage:{
-        type: String,
-        required: true
-    },
-    username:{
-        type: String,
-        required: true
-    },
-    userid:{
-        type: String,
-        required: true
-    },
     chatid:{
         type: String,
         required: true
     },
-    sent:{
-        type: Boolean,
+    message:{
+        type: String,
         required: true
+    },
+    sendername:{
+        type: String,
+        required: true
+    },
+    senderid:{
+        type: String,
+        required: false
+    },
+    senderdispname:{
+        type: String,
+        required: false
+    },
+    receivername:{
+        type: String,
+        required: false
+    },
+    receiverdispname:{
+        type: String,
+        required: false
     },
     timestamp:{
         type: Date,

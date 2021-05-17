@@ -2,17 +2,12 @@
 const Express = require('express');
 const Mongoose = require('mongoose');
 const Pusher = require('pusher');
+const { jwtCheck } = require('./check-jwt')
 const cors = require('cors');
+const dotenv = require('dotenv').config();
 
 //initialising express
 const app = Express();
-
-//api health test for debugging during deployment
-app.get("/", (req, res)=> res.status(200).send("Hello there"));
-//setting up routes
-const userMessages = require('./routes/apis/usermessage');
-const userChats = require('./routes/apis/chats.js');
-const users = require('./routes/apis/users');
 
 //middleware
 //setting up the express in-built json parser
@@ -20,6 +15,15 @@ app.use(Express.json());
 app.use(Express.urlencoded({ extended: false }));
 //setting up headers using cors package
 app.use(cors());
+
+//api health test for debugging during deployment
+app.get("/", (req, res)=> res.status(200).send("Hello there"));
+
+//setting up routes
+const userMessages = require('./routes/apis/usermessage');
+const userChats = require('./routes/apis/chats.js');
+const users = require('./routes/apis/users');
+
 
 //use routes
 app.use('/api/messages', userMessages);
@@ -34,8 +38,8 @@ const pusher = new Pusher({
     secret: "c89923ca5686debc49ba",
     cluster: "mt1",
     useTLS: true
-  });
-  
+});
+
 
 //connecting to the MongoDB atlas cloud
 Mongoose
@@ -57,9 +61,14 @@ dbStream.once("open", ()=>{
 
         if(change.operationType === 'insert'){
             const messageDetails = change.fullDocument;
-            pusher.trigger(['messages', 'chats'], 'inserted', {
-                name: messageDetails.username,
-                message: messageDetails.usermessage
+            const chatDetails = change.fullDocument;
+            pusher.trigger(['messages'], 'inserted', {
+                id: messageDetails._id,
+                name: messageDetails.name,
+                message: messageDetails.message,
+                sub: messageDetails.id,
+                chatid: messageDetails.chatid,
+                timestamp: messageDetails.timestamp
             })
         }else{
             console.log("Pusher was not triggered")

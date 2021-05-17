@@ -1,0 +1,10 @@
+
+  useEffect(()=>{
+    axios.get('api/users/sync')
+    .then(response =>{
+      const contacts = response.data;
+      setContactlist(contacts);
+      console.log(contacts);
+      console.log(contactlist);
+    })
+  },[])

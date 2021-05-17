@@ -13,19 +13,31 @@ const ChatsSchema = new Schema({
         type: String,
         required: true
     },
+    sndrs_id:{
+        type: String,
+        required: true,
+    },
+    sndrs_name:{
+        type: String,
+        required: true,
+    },
     recpt_mail:{
         type: String,
         required: true,
         unique: true
     },
-    recpt_num:{
+    sndrs_mail:{
         type: String,
         required: true,
         unique: true
     },
-    disp_name:{
+    recptdispName:{
         type: String,
-        required: true
+        required: true,
+    },
+    sndrsdispName:{
+        type: String,
+        required: true,
     },
     last_msge:{
         type: String,

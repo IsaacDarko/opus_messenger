@@ -1,0 +1,53 @@
+.modal__wrapper{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.modal__header{
+
+}
+
+.modal__body{
+    overflow: scroll;
+    background-color: rgba(255,255,255,0.2);
+    height: 60vh;
+    width: 20vw;
+    border-radius: 20px;
+    overflow-y:auto;
+    overflow-x: hidden;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 20px;
+    z-index: 2;
+    cursor: pointer;
+    justify-content: space-between;
+}
+
+.modal__inner{
+    box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.7);
+    
+}
+
+.modal__body > p {
+    justify-content: right;
+    border-radius: 10px;
+    padding:5px;
+    
+}
+
+
+.modal__body > p:hover {
+    background-color: #ebebeb;
+
+}
+
+.modal__footer{
+
+}

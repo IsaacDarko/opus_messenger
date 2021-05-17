@@ -23,3 +23,19 @@
     margin-left: 15px;
     font-size: 12px;
 }
+
+.sidebarChat__right{
+    flex: 1;
+    margin-left:10vw;
+    padding-right: 0px;
+}
+
+.delete__Chat > .MuiSvgIcon-root{
+    font-size: 20px;
+}
+
+.delete__Chat > .MuiSvgIcon-root :hover {
+    color: rgb(187, 61, 61);
+    font-size: 20px;
+    
+}
