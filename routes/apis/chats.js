@@ -18,6 +18,14 @@ app.use(Express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(jwtCheck);
 
+const pusher = new Pusher({
+    appId: "1201019",
+    key: "0d81b56dcdff3b8a813c",
+    secret: "c89923ca5686debc49ba",
+    cluster: "mt1",
+    useTLS: true
+});
+
 //@route  GET api/chats/sync
 //@descr  Gets all user chats
 //@access Private
@@ -30,6 +38,8 @@ router.get('/sync', (req, res)=>{
     })
     .catch(err => res.json({success: false}));
 });
+
+
 
 //@route  POST api/chats
 //@descr  Post a newly started chat
@@ -45,49 +55,20 @@ router.post('/',  (req, res)=>{
         recpt_mail: freshChat.recpt_mail,
         sndrs_mail: freshChat.sndrs_mail,
         recptdispName: freshChat.recptdispName,
-        sndrsdispName:freshChat.sndrsdispName,
+        sndrsdispName: freshChat.sndrsdispName,
         last_msge: freshChat.last_mesge,
         msges_num: freshChat.numofmsges
     })
     newChat.save()
     .then(chatdeets => {
-        const dbStream = Mongoose.connection
-        dbStream.once("open", ()=>{
-        const msgCollection = dbStream.collection("chats");
-        const changeStream = msgCollection.watch();
-        console.log("MongoDB Chat data stream is open");
-        
-        changeStream.on("change", (change) => {
-            console.log(change);
-
-            if(change.operationType === 'insert'){
-                const chatDetails = change.fullDocument;
-                pusher.trigger(['chats'], 'inserted', {
-                    reciepientsid: chatDetails.recpt_id,
-                    reciepientsname: chatDetails.recpt_name,
-                    sendersid : chatDetails.sndrs_id,
-                    sendersname : chatDetails.sndrs_name,
-                    reciepientsmail: chatDetails.recpt_mail,
-                    sendersmail : chatDetails.sndrs_mail,
-                    reciepientsdispName: chatDetails.recptdispName,
-                    lastmessage : chatDetails.last_msge,
-                    chatid: chatDetails.chatid,
-                    numofmessages : chatDetails.msges_num,
-                    timestamp: chatDetails.timestamp
-                })
-            }else{
-                console.log("Pusher was not triggered")
-            }
-        
-        })
-    })
-
-        /*res.status(201).json(chatdeets);
-        console.log("data inserted"); */ 
-    //.catch(err => console.log(err));
+    console.log('data was inserted successfully');
+    res.status(201).json(chatdeets);
+    console.log("data inserted");
+    }) 
+    .catch(err => console.log(err));
 
     })
-})
+
 
 
 
@@ -98,14 +79,12 @@ router.get('/chat/:id', (req, res) =>{
     console.log(req.params);
     const id = req.params.id;
     console.log(id);
-    Chats.find({ sndrs_name: id, recpt_name: id }, function(err, result) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(result);
-            res.json(result);
-        }
-        })
+    Chats.find({ 
+        sndrs_name: id
+    }).sort({date: -1})
+        .then(chats => res.status(200).json(chats))
+        .catch(err => res.status(404).json({success: false}));
+    
 });
 
 

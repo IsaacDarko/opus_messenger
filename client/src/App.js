@@ -26,7 +26,8 @@ function App() {
     }else{
       localStorage.setItem('user', JSON.stringify(user))
       console.log(user);
-      retrieveUsersChats()
+      retrieveUsersChats();
+      retrieveUsersMessages();
     }    
   }, [useAuth0, user]);
 
@@ -37,10 +38,16 @@ function App() {
     console.log(myself)
     const id = myself.name;
     console.log(id);
-    axios.get('api/messages/:id')
-    .then(res =>{
-      console.log(res.data);
-      setMessages(res.data)
+    axios.get(`api/messages/${id}`)
+    .then(responses =>{
+      const responseData = responses.data
+      console.log(responseData);
+      const res = responseData.filter((response)=>{
+          return { senderid:id }
+      })
+      console.log(res);
+      setMessages(responses.data)
+      console.log(messages);
     }).catch(err => console.log(`there was an API Error ${err}`));
   }
 
@@ -197,25 +204,6 @@ function App() {
   }
 
 
-  useEffect(() =>{
-    const pusher = new Pusher('0d81b56dcdff3b8a813c', {
-      cluster: 'mt1'
-    });
-
-    const channel = pusher.subscribe('chats');
-    channel.bind('inserted', function(newChat) {
-      setChats([...messages, newChat]);      
-    });
-
-    return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-    }
-
-  },[chats]);
-
-
-
 
 
 
@@ -224,17 +212,24 @@ function App() {
       cluster: 'mt1'
     });
 
-    const channel = pusher.subscribe('messages');
-    channel.bind('inserted', function(newMessage) {
+    const messageChannel = pusher.subscribe('messages');
+    const chatChannel = pusher.subscribe('chats');
+
+    messageChannel.bind('inserted', function(newMessage) {
+      setMessages([...messages, newMessage]);      
+    });
+    chatChannel.bind('inserted', function(newMessage) {
       setMessages([...messages, newMessage]);      
     });
 
     return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
+      messageChannel.unbind_all();
+      messageChannel.unsubscribe();
+      chatChannel.unbind_all();
+      chatChannel.unsubscribe();
     }
 
-  },[messages]);
+  },[messages, chats]);
 
   console.log(messages);
   

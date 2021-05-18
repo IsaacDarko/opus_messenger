@@ -29,8 +29,8 @@ router.get('/sync', (req, res)=>{
     axios.request(options).then(function (response) {
         console.log(response.data);
         const stuffs = response.data
-        const contactlist = stuffs.filter(function( obj ) {
-            return obj.name !== userid;
+        const contactlist = stuffs.filter(function( contact ) {
+            return contact.name !== userid;
         });
         contactlist.forEach(contact => {
             delete contact.identities;

@@ -7,6 +7,7 @@ const ChatsSchema = new Schema({
     recpt_id:{
         type: String,
         required: true,
+        unique: true
 
     },
     recpt_name:{
@@ -23,7 +24,8 @@ const ChatsSchema = new Schema({
     },
     recpt_mail:{
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     sndrs_mail:{
         type: String,
@@ -31,7 +33,7 @@ const ChatsSchema = new Schema({
     },
     recptdispName:{
         type: String,
-        required: true,
+        required: true
     },
     sndrsdispName:{
         type: String,

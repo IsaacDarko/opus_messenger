@@ -33,7 +33,12 @@ router.get('/sync', (req, res)=>{
 //@descr  Gets all messages for a particular user
 //@access Private
 router.get('/:id', (req, res)=>{ 
-    UserMessage.find()
+    const id = req.params.id
+    console.log(id);
+    UserMessage.find({
+        sendername: id
+
+    })
     .sort({date: 1})
     .then(usermessages => res.json(usermessages))
     .catch(err => res.status(404).json({success: false}));

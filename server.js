@@ -63,14 +63,30 @@ dbStream.once("open", ()=>{
             const messageDetails = change.fullDocument;
             const chatDetails = change.fullDocument;
             pusher.trigger(['messages'], 'inserted', {
-                id: messageDetails._id,
-                name: messageDetails.name,
-                message: messageDetails.message,
-                sub: messageDetails.id,
-                chatid: messageDetails.chatid,
-                timestamp: messageDetails.timestamp
+                id: messageDetails._id,             //this is what pusher sends from the changeDocument to frontend
+                name: messageDetails.sendername,    //this is what pusher sends from the changeDocument to frontend
+                message: messageDetails.message,    //this is what pusher sends from the changeDocument to frontend
+                chatid: messageDetails.chatid,      //this is what pusher sends from the changeDocument to frontend
+                timestamp: messageDetails.timestamp //this is what pusher sends from the changeDocument to frontend
             })
-        }else{
+            pusher.trigger(['chats'], 'inserted', {
+                recpt_id: chatDetails.recpt_id,     //this is what pusher sends from the changeDocument to frontend
+                recpt_name: chatDetails.recpt_name, //this is what pusher sends from the changeDocument to frontend
+                sndrs_id : chatDetails.sndrs_id,    //this is what pusher sends from the changeDocument to frontend
+                sndrs_name : chatDetails.sndrs_name,//this is what pusher sends from the changeDocument to frontend
+                recpt_mail: chatDetails.recpt_mail, //this is what pusher sends from the changeDocument to frontend
+                sndrs_mail : chatDetails.sndrs_mail,//this is what pusher sends from the changeDocument to frontend
+                recptdispName: chatDetails.recptdispName,//this is what pusher sends from the changeDocument to frontend
+                last_msge : chatDetails.last_msge,  //this is what pusher sends from the changeDocument to frontend
+                chatid: chatDetails.chatid,         //this is what pusher sends from the changeDocument to frontend
+                msges_num : chatDetails.msges_num,  //this is what pusher sends from the changeDocument to frontend
+                timestamp: chatDetails.timestamp    //this is what pusher sends from the changeDocument to frontend
+            })
+        }else if(change.operationType === 'deleted'){
+            pusher.trigger(
+                ['chats'], 'deleted', 
+                change.documentKey._id
+            )}else{
             console.log("Pusher was not triggered")
         }
     

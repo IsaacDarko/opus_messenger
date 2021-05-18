@@ -52,7 +52,6 @@ const StartChatModal = (props) => {
     useEffect(()=>{
         if( chats !== undefined || recptId !== '' && recptName !== '' && recptMail !== '' && dispName !== '' ){
             secureContactDeets();
-            selectUser();
         }
     },[recptId, recptName, recptMail, dispName])
 
@@ -63,7 +62,7 @@ const StartChatModal = (props) => {
                 <div className="modal__inner">
                     <div className="modal__body">
                         { contactlist.map((contact) =>  (                        
-                            <p className="user__select" onClick={() => {      
+                            <div className="user__select" key={ contact.user_id } onClick={() => {      
                                     setRecptId(`${contact.user_id}`);
                                     setRecptMail(`${contact.email}`);
                                     setRecptName(`${contact.name}`);
@@ -73,7 +72,7 @@ const StartChatModal = (props) => {
                                 <span>
                                     ${contact.name}
                                 </span>
-                            </p>                   
+                            </div>                   
                         )
                         )}
                     </div>

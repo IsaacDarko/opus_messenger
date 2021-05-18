@@ -50,7 +50,7 @@ const Chat = (props) => {
 
 
 
-    return !chatid ? (
+    return chatid === [] ? (
                 <div className="chat">
                     <div className="chat__header">
                         <Avatar />
@@ -84,7 +84,7 @@ const Chat = (props) => {
                             <input value={input} onChange={e => 
                             setInput(e.target.value)} placeholder="type a message" type="text" />
                             <button onClick={()=> {                                
-                                sendMessage()
+                                alert('You need to select a chat first before sending a message')
                                 }
                                 } type="submit"><SendIcon/></button>
                         </form>
@@ -119,8 +119,8 @@ const Chat = (props) => {
                     <div className="chat__body">
                         {messages.map((message) => (
                             <div className="message__container" key={message._id}>
-                                <p className={`chat__message ${user.name === message.sendername && 'sender__myself'}`}>
-                                    <span className="chat__name">{message.sendername}</span>
+                                <p className={`chat__message ${name === message.name && 'sender__myself'}`}>
+                                    <span className="chat__name">{message.name}</span>
                                         {message.message}
                                     <span className="chat__timestamp">
                                         { message.timestamp }
