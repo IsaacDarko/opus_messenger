@@ -1,13 +1,27 @@
 .sidebarChat {
     display: flex;
+    flex: 1;
     padding: 20px;
     cursor: pointer;
     border-bottom: 1px solid #f6f6f6;
 }
 
+.sidebarChat__left {
+    display: flex;
+    flex-direction: column;
+    flex: 0.1;
+
+}
+
 .sidebarChat__left > .MuiAvatar {
     width: 36px;
     height: 36px;
+}
+
+.sidebarChat__info {
+    display: flex;
+    flex-direction: column;
+    flex: 0.7;
 }
 
 .sidebarChat:hover {
@@ -19,15 +33,21 @@
     margin-bottom: 2px;
 }
 
-.sidebarChat__info {
-    margin-left: 15px;
-    font-size: 12px;
+.sidebarChat__right{
+    display: flex;
+    flex-direction: column;
+    flex: 0.2;
 }
 
-.sidebarChat__right{
-    flex: 1;
-    margin-left:10vw;
-    padding-right: 0px;
+.chat__trash > .MuiSvgIcon-root :hover {
+    color: rgb(187, 61, 61);
+    font-size: 20px;    
+}
+
+.chat__block > .MuiSvgIcon-root :hover {
+    color: rgb(187, 61, 61);
+    font-size: 20px;
+    
 }
 
 .delete__Chat > .MuiSvgIcon-root{

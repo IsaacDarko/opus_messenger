@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import '../Styles/Sidebar.css';
 import '../Styles/SidebarChat.css'
 import { Avatar,IconButton } from '@material-ui/core';
@@ -10,19 +10,27 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
 
 
-function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, deleteNow, gotId, setGotId }) {
+function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, retrieveUsersChats, deleteNow }) {
     const [chatid, setChatid] = useState('');
     const [ currUserId, setCurrUserId ] = useState('');
     const [ currUserName, setCurrUserName ] = useState('');
     const [ currUserDisp, setCurrUserDisp ] = useState('');
     const [ currUserMail, setCurrUserMail ] = useState('');
-    const [seed, setSeed] = useState('');
+    const [ isChatId, setIsChatId ] = useState();
 
     const user = JSON.parse(localStorage.getItem('user'));
     console.log(user);
-
     const { picture } = user;
 
+    const unlock = () =>{
+        if( chats === [] || chats === undefined ){
+            setIsChatId(false);
+            console.log('Sidebar Unlock Failed...No chats exist in this account')
+        }else{
+            setIsChatId(true);
+            console.log('Sidebar Unlock Successful')
+        }
+    }
 
     const signalModal = () => {
         setShow(true);
@@ -30,15 +38,17 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, deleteNow, 
     }
 
     useEffect(() =>{
-        setSeed(Math.floor(Math.random()*219));
-    }, [chats]);
+        unlock()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
 
 
-    const secureChatId = useCallback(() => {
+    const secureChatId = (() => {
         const prevChatId = localStorage.getItem('chatid');
         console.log(prevChatId);
         const currChatId = chatid;
+        console.log(currChatId);
         localStorage.removeItem('chatid');
         const interrim = localStorage.getItem('chatid ');
         console.log(interrim);
@@ -65,7 +75,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, deleteNow, 
 
 
 
-    return chats === [] ? (
+    return !isChatId ? (
 
         <div className="sidebar">
             <div className="sidebar__header">
@@ -136,7 +146,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, deleteNow, 
                 }}>
             
                     <div className="sidebarChat__left">
-                        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
+                        <Avatar src={`${chat.recptdispPic}`}/>
                     </div>
                     
                     <div className="sidebarChat__info">
@@ -149,8 +159,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, deleteNow, 
                             
                             }}  
                             /></span> 
-                            <span className="chat__block"> < BlockIcon onClick={() =>  blockUser} /> </span>
-
+                            <span className="chat__block"> <BlockIcon onClick={() =>  blockUser} /> </span>
                     </div> 
                     
                 </div>

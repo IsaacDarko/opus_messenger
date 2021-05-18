@@ -11,10 +11,6 @@
     
 }
 
-.modal__header{
-
-}
-
 .modal__body{
     overflow: scroll;
     background-color: rgba(255,255,255,0.2);
@@ -37,17 +33,15 @@
 
 .modal__body > p {
     justify-content: right;
+    display:inline-flex;
     border-radius: 10px;
     padding:5px;
-    
+    margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 
 .modal__body > p:hover {
     background-color: #ebebeb;
-
-}
-
-.modal__footer{
 
 }

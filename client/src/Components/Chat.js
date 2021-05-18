@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../Styles/Chat.css';
 import { Avatar, IconButton } from '@material-ui/core';
 import { AttachFile, SearchOutlined } from '@material-ui/icons';
@@ -11,20 +11,30 @@ import Loading from './Loading';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 const Chat = (props) => { 
-    const { messages, setMessages } = props;
+    const { messages } = props;
     const { user } = useAuth0();
-    const getMyId = localStorage.setItem('user', JSON.stringify(user));
     console.log(user);
-    const { name, sub } = user;
+    const { name } = user;
     console.log(messages);
     const [input, setInput] = useState("");
     const chatid = localStorage.getItem('chatId');
+    const [ isChatId, setIsChatId ] = useState();
+
+
+    const unlock = () =>{
+        if(chatid === "" || chatid === undefined){
+            setIsChatId(false);
+            console.log('ChatPage Unlock Failed...No chats exist in this account')
+        }else{
+            setIsChatId(true);
+            console.log('ChatPage Unlock Successful')
+        }
+    }
 
 
     const sendMessage = (e) => {
         e.preventDefault(); 
         const details = localStorage.getItem('currentUser');
-        const { userid, name, displayname, mail } = details;
         console.log(details);
         if (chatid !== null || chatid !== ''){
             console.log(chatid)
@@ -48,9 +58,15 @@ const Chat = (props) => {
     }
 
 
+    useEffect(() =>{
+        unlock()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
 
-    return chatid === [] ? (
+
+
+    return !isChatId ? (
                 <div className="chat">
                     <div className="chat__header">
                         <Avatar />

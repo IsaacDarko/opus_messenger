@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Switch } from 'react-router-dom';
 import Chat from './Components/Chat';
@@ -6,11 +6,10 @@ import Sidebar from './Components/Sidebar';
 import StartChatModal from './Components/StartChatModal';
 import Pusher from "pusher-js";
 import axios from './axios';
-import { useAuth0, User } from '@auth0/auth0-react'
+import { useAuth0 } from '@auth0/auth0-react'
 import ProtectedRoute from './auth/protected-route';
 
 function App() {
-  const { getAccessTokenSilently } = useAuth0();
   const { user } = useAuth0();
   const [ show, setShow ] = useState();
   const [contactlist, setContactlist] = useState([]);
@@ -18,18 +17,33 @@ function App() {
   const [chatId, setChatId] = useState();
   const [ chats, setChats ] = useState([]);
   const [ messages, setMessages ] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [ loggedInUser, setLoggedInUser ] = useState({});
+
+  useEffect(()=>{
+    storageChecker()
+  })
 
   useEffect(()=>{
     if(user === undefined || user === []){  
       setLoggedInUser(user);    
     }else{
-      localStorage.setItem('user', JSON.stringify(user))
+      localStorage.setItem('user', JSON.stringify(user));
       console.log(user);
       retrieveUsersChats();
       retrieveUsersMessages();
     }    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useAuth0, user]);
+
+
+  const storageChecker = () => {
+    const chatidChecker =  localStorage.getItem('chatid');
+    const userChecker = localStorage.getItem('user');
+    const messagesChecker = localStorage.getItem('messages');
+
+    console.log(`Okay so these are your local storage variables-- chatid:${chatidChecker}, user details:${userChecker}, messages:${messagesChecker}`)
+  }
 
 
 
@@ -218,8 +232,8 @@ function App() {
     messageChannel.bind('inserted', function(newMessage) {
       setMessages([...messages, newMessage]);      
     });
-    chatChannel.bind('inserted', function(newMessage) {
-      setMessages([...messages, newMessage]);      
+    chatChannel.bind('inserted', function(newChat) {
+      setChats([...chats, newChat]);      
     });
 
     return () => {
@@ -232,6 +246,7 @@ function App() {
   },[messages, chats]);
 
   console.log(messages);
+  console.log(chats);
   
 
 
@@ -247,7 +262,7 @@ function App() {
               <ProtectedRoute exact path="/" component={Chat}>
 
                 <StartChatModal contactlist={contactlist} show={show} setShow={setShow} switchOff={switchOff} selectUser={selectUser} />
-                <Sidebar  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
+                <Sidebar  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
                 <Chat messages={messages} user={user} chats={chats} chatId={chatId} setMessages={setMessages} />
                 
               </ProtectedRoute>

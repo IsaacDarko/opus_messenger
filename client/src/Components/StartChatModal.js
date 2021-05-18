@@ -18,6 +18,9 @@ const StartChatModal = (props) => {
     const [ recptName, setRecptName ] = useState('');
     const [ recptMail, setRecptMail ] = useState('');
     const [ dispName, setdispName ] = useState('');
+    const [ dispPic, setdispPic ] = useState('');
+
+    
     const [ selectedUser, setSelectedUser ] = useState({});
     const toggle = () => {
         props.switchOff();
@@ -34,6 +37,7 @@ const StartChatModal = (props) => {
             'recpt_mail' : recptMail,
             'sndrs_mail' : user.email,
             'recptdispName' : dispName,
+            'recptPicture' : dispPic,
             'sndrsdispName':user.nickname,
             'last_mesge' : "",
             'numofmsges' : 0
@@ -50,9 +54,11 @@ const StartChatModal = (props) => {
 
 
     useEffect(()=>{
+        // eslint-disable-next-line no-mixed-operators
         if( chats !== undefined || recptId !== '' && recptName !== '' && recptMail !== '' && dispName !== '' ){
             secureContactDeets();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[recptId, recptName, recptMail, dispName])
 
     
@@ -66,7 +72,8 @@ const StartChatModal = (props) => {
                                     setRecptId(`${contact.user_id}`);
                                     setRecptMail(`${contact.email}`);
                                     setRecptName(`${contact.name}`);
-                                    setdispName(`${contact.nickname}`);              
+                                    setdispName(`${contact.nickname}`);    
+                                    setdispPic(`${contact.picture}`);
                                 }}>
                                 <Avatar src={`${contact.picture}`} />
                                 <span>

@@ -55,6 +55,7 @@ router.post('/',  (req, res)=>{
         recpt_mail: freshChat.recpt_mail,
         sndrs_mail: freshChat.sndrs_mail,
         recptdispName: freshChat.recptdispName,
+        recptdispPic: freshChat.recptPicture,
         sndrsdispName: freshChat.sndrsdispName,
         last_msge: freshChat.last_mesge,
         msges_num: freshChat.numofmsges

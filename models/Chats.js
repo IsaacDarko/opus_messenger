@@ -35,6 +35,10 @@ const ChatsSchema = new Schema({
         type: String,
         required: true
     },
+    recptdispPic:{
+        type: String,
+        required: false
+    },
     sndrsdispName:{
         type: String,
         required: true,

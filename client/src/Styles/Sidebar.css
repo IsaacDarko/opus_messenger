@@ -1,4 +1,6 @@
 .sidebar {
+    display: flex;
+    flex-direction: column;
     flex: 0.30;
 }
 
@@ -65,7 +67,6 @@
 }
 
 .sidebar__emptyChat {
-    height: inherit;
     padding:20px;
     align-items: center;
 }
