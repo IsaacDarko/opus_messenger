@@ -2,7 +2,7 @@
 const Mongoose = require('mongoose');
 const Schema = Mongoose.Schema;
 
-//set up schema using mongoose schema method
+//set up schema using mongoose schema method 
 const UserMessageSchema = new Schema({
     chatid:{
         type: String,

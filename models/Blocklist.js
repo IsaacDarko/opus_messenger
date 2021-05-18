@@ -31,11 +31,11 @@ const BlocklistSchema = new Schema({
         required: true,
         unique: true
     },
-    blockerdispName:{
+    blocker_dispName:{
         type: String,
         required: true,
     },
-    blockeedispName:{
+    blockee_dispName:{
         type: String,
         required: true,
     },
@@ -50,4 +50,4 @@ const BlocklistSchema = new Schema({
 });
 
 //declare module exports and create collection
-module.exports = Blocklist = Mongoose.model('blocklist', BlocklistSchema);
+module.exports = Block = Mongoose.model('blocklist', BlocklistSchema);

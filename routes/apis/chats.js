@@ -84,16 +84,15 @@ router.get('/chat/:id', (req, res) =>{
         sndrs_name: id
     }).sort({date: -1})
         .then(chats => res.status(200).json(chats))
-        .catch(err => res.status(404).json({success: false}));
     
 });
 
 
 
-//@route  DELETE api/chat/:id
+//@route  DELETE api/chats/:id
 //@descr  Deletes a chat
 //@access Private
-router.delete('/:id', jwtCheck, (req, res)=>{
+router.delete('/:id', (req, res)=>{
     Chats.findById(req.params.id)
     .then(chat => chat.remove().then(() => res.json({success:true})))
     .catch(err => res.status(404).json({success: false}));

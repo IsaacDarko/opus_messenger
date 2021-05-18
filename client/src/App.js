@@ -88,9 +88,21 @@ function App() {
 
 
   const blockUser = () => {
-    const userid = localStorage.get('myblockee');
+    const userid = localStorage.get('endangered');
+    const blockersDeets = JSON.parse(localStorage.getItem('user'));
+    const { blockersname, blockersmail, blockersdisplay } = blockersDeets
+    const blockeesDeets = JSON.parse(localStorage.getItem('user'));
+    const { blockeesid, blockeesname, blockeesmail, blockeesdisplay } = blockeesDeets
     const options = {
-      id: userid
+      blocker_id:userid,
+      blocker_name:blockersname,
+      blockee_id:blockeesid,
+      blockee_name:blockeesname,
+      blocker_mail:blockersmail,
+      blockee_mail:blockeesmail,
+      blocker_dispName:blockersdisplay,
+      blockee_dispName:blockeesdisplay,
+      
     }
     axios.post('api/users/block/:id', {
       options
@@ -209,11 +221,12 @@ function App() {
 
 
   const deleteNow = () => {
-    const chatid = localStorage.getItem('chatId');
+    const chatid = localStorage.getItem('endangered');
     console.log(chatid);
     axios.delete(`api/chats/${chatid}`)
     .then(res => {
       console.log(res)
+      alert('Chat Deleted')
     })
   }
 
@@ -233,7 +246,8 @@ function App() {
       setMessages([...messages, newMessage]);      
     });
     chatChannel.bind('inserted', function(newChat) {
-      setChats([...chats, newChat]);      
+      setChats([...chats, newChat]);
+      fetchChat();
     });
 
     return () => {

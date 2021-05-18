@@ -7,6 +7,7 @@ const cors = require('cors');
 
 //retrieving model
 const Users = require('../../models/Users.js');
+const Block = require('../../models/Blocklist');
 
 const options = {
     method: 'GET',
@@ -71,14 +72,34 @@ router.delete('/:id', (req, res)=>{
 });
 
 
-//@route  POST api/users/block/:id
+//@route  POST api/users/block
 //@descr  Allows for blocking a user using their id
 //@access Private
-router.post('apis/users/block/:id',(req,res)=>{
-    const deets = req.body.id;
+router.post('apis/users/block',(req,res)=>{
+    const deets = req.body.deets;
     console.log(deets)
-    Users.find
+    const newBlock = new Block({
+
+        blocker_id :deets.blocker_id,
+        blocker_name :deets.blocker_name,
+        blockee_id :deets.blockee_id,
+        blockee_name :deets.blockee_name,
+        blocker_mail :deets.blocker_mail,
+        blockee_mail :deets.blockee_mail,
+        blocker_dispName :deets.blocker_dispName,
+        blockee_dispName :deets.blockee_dispName
+
+    })
+    newBlock.save()
+    .then(blockdetails => {
+    console.log(blockdetails)
+    console.log(`data was inserted successfully: ${blockdetails}`);
+    res.status(201).json(chatdeets);
+    }) 
+    .catch(err => console.log(err));
+
 })
+
 
 
 //declare module exports

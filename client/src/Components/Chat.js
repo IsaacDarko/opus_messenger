@@ -14,11 +14,11 @@ const Chat = (props) => {
     const { messages } = props;
     const { user } = useAuth0();
     console.log(user);
-    const { name } = user;
     console.log(messages);
     const [input, setInput] = useState("");
-    const chatid = localStorage.getItem('chatId');
+    const [ currRecpt, setCurrRecpt ] = useState({});
     const [ isChatId, setIsChatId ] = useState();
+    const chatid = localStorage.getItem('chatId');
 
 
     const unlock = () =>{
@@ -34,7 +34,7 @@ const Chat = (props) => {
 
     const sendMessage = (e) => {
         e.preventDefault(); 
-        const details = localStorage.getItem('currentUser');
+        const details = JSON.parse(localStorage.getItem('currentUser'));
         console.log(details);
         if (chatid !== null || chatid !== ''){
             console.log(chatid)
@@ -45,6 +45,7 @@ const Chat = (props) => {
                 senderid:user.sub,
                 sndrsdispname:user.nickname,
                 receivername:details.name,
+                receiverspic: details.pic,
                 receiverdispname:details.displayname
                 
             }).then( response =>{
@@ -61,8 +62,10 @@ const Chat = (props) => {
     useEffect(() =>{
         unlock()
     // eslint-disable-next-line react-hooks/exhaustive-deps
+        const current = JSON.parse(localStorage.getItem('currentUser'));
+        console.log(current.picture);
+        setCurrRecpt(current);
     }, []);
-
 
 
 
@@ -112,10 +115,10 @@ const Chat = (props) => {
                 <div className="chat">
 
                     <div className="chat__header">
-                        <Avatar />
+                        <Avatar src={`${currRecpt.picture}`} />
 
                         <div className="chat__headerInfo">
-                            <h3>Contact Name</h3>
+                            <h3>{currRecpt.name}</h3>
                             <p>Last Seen Online....</p>
                         </div>
 
@@ -135,7 +138,7 @@ const Chat = (props) => {
                     <div className="chat__body">
                         {messages.map((message) => (
                             <div className="message__container" key={message._id}>
-                                <p className={`chat__message ${name === message.name && 'sender__myself'}`}>
+                                <p className={`chat__message ${user.name === message.name && 'sender__myself'}`}>
                                     <span className="chat__name">{message.name}</span>
                                         {message.message}
                                     <span className="chat__timestamp">

@@ -17,10 +17,41 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, retrieveUse
     const [ currUserDisp, setCurrUserDisp ] = useState('');
     const [ currUserMail, setCurrUserMail ] = useState('');
     const [ isChatId, setIsChatId ] = useState();
+    const [ currentUserPic,setCurrentUserPic ] = useState('');
+    const [ selectedId, setSelectedId ] = useState();
+    const [ doomedId, setDoomedId ] = useState();
 
     const user = JSON.parse(localStorage.getItem('user'));
     console.log(user);
     const { picture } = user;
+
+
+useEffect(()=>{
+    secureChatId()
+},[currentUserPic])
+
+
+    const acquireTarget = () => {
+        const previouslySelected = localStorage.getItem('endangered');
+        console.log(previouslySelected);
+        localStorage.removeItem('endangered');
+        const endangeredItem = localStorage.setItem('endangered', JSON.stringify(selectedId));
+        console.log(endangeredItem);
+        deleteNow()
+    }
+
+
+    const acquireExile = () => {
+        const previouslySelected = localStorage.getItem('endangered');
+        console.log(previouslySelected);
+        localStorage.removeItem('endangered');
+        const endangeredItem = localStorage.setItem('endangered', JSON.stringify(selectedId));
+        console.log(endangeredItem);
+        deleteNow()
+    }
+
+
+
 
     const unlock = () =>{
         if( chats === [] || chats === undefined ){
@@ -62,12 +93,13 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, retrieveUse
             userid: currUserId,
             name: currUserName,
             displayname: currUserDisp,
-            mail: currUserMail
+            mail: currUserMail,
+            picture: currentUserPic
         };
 
         const current = localStorage.setItem('currentUser', JSON.stringify(currentUser))  
-        console.log(current);
-    })
+        console.log(currentUser);
+    })//where sidebar makes the current receiver's details accessible to all other components
 
 
 
@@ -137,12 +169,12 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, retrieveUse
             <div className="sidebar__chats">
             {chats.map((chat) => (
                 <div className="sidebarChat" key={ chat._id } value={chatid} id={chat._id} onClick={ (e) => {                
-                    setChatid(e.target.id);
+                    setChatid(chat._id);
                     setCurrUserId(chat.recpt_id)
                     setCurrUserName(chat.recpt_name)
                     setCurrUserDisp(chat.recptdispName)
                     setCurrUserMail(chat.recpt_mail)
-                    setTimeout(secureChatId(),5000);
+                    setCurrentUserPic(chat.recptdispPic)
                 }}>
             
                     <div className="sidebarChat__left">
@@ -155,11 +187,15 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, retrieveUse
                     </div>
 
                     <div className="sidebarChat__right">
-                            <span className="chat__trash" ><DeleteIcon onClick={ () => {
-                            
-                            }}  
-                            /></span> 
-                            <span className="chat__block"> <BlockIcon onClick={() =>  blockUser} /> </span>
+                            <span id={chat._id} className="chat__trash" ><DeleteIcon onClick={(e) => {
+                                setSelectedId(e.target.id)
+                                
+                                }}/></span> 
+                            <span id={chat._id} className="chat__block"> <BlockIcon onClick={(e) => {
+                                setSelectedId(e.target.id)
+                                acquireExile()
+                                
+                                }} /> </span>
                     </div> 
                     
                 </div>
