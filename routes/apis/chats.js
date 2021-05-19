@@ -62,9 +62,8 @@ router.post('/',  (req, res)=>{
     })
     newChat.save()
     .then(chatdeets => {
-    console.log('data was inserted successfully');
     res.status(201).json(chatdeets);
-    console.log("data inserted");
+    console.log("data inserted successfully");
     }) 
     .catch(err => console.log(err));
 

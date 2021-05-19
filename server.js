@@ -48,20 +48,21 @@ Mongoose
     .catch(err => console.log(err));
 
 
-//setting up change stream to activate Mongo-live-database
+//setting up change stream to activate Mongo-live-database(CRUD first then trigger render)
 const dbStream = Mongoose.connection
 dbStream.once("open", ()=>{
     const msgCollection = dbStream.collection("usermessages");
-    const changeStream = msgCollection.watch();
-    console.log("MongoDB data stream open");
+    const chatsCollection = dbStream.collection("chats");
+    const messageChangeStream = msgCollection.watch();
+    const chatsChangeStream = chatsCollection.watch();
+    console.log("MongoDB data streams open");
 
     
-    changeStream.on("change", (change) => {
+    messageChangeStream.on("change", (change) => {
         console.log(change);
 
         if(change.operationType === 'insert'){
             const messageDetails = change.fullDocument;
-            const chatDetails = change.fullDocument;
             pusher.trigger(['messages'], 'inserted', {
                 id: messageDetails._id,             //this is what pusher sends from the changeDocument to frontend
                 name: messageDetails.sendername,    //this is what pusher sends from the changeDocument to frontend
@@ -69,6 +70,21 @@ dbStream.once("open", ()=>{
                 chatid: messageDetails.chatid,      //this is what pusher sends from the changeDocument to frontend
                 timestamp: messageDetails.timestamp //this is what pusher sends from the changeDocument to frontend
             })
+        }else if(change.operationType === 'deleted'){
+            pusher.trigger(
+                ['messages'], 'deleted', 
+                change.documentKey._id
+            )}else{
+            console.log("Pusher was not triggered")
+        }
+    
+    })
+
+    chatsChangeStream.on("change", (change) => {
+        console.log(change);
+
+        if(change.operationType === 'insert'){
+            const chatDetails = change.fullDocument;
             pusher.trigger(['chats'], 'inserted', {
                 recpt_id: chatDetails.recpt_id,     //this is what pusher sends from the changeDocument to frontend
                 recpt_name: chatDetails.recpt_name, //this is what pusher sends from the changeDocument to frontend
@@ -84,13 +100,16 @@ dbStream.once("open", ()=>{
             })
         }else if(change.operationType === 'deleted'){
             pusher.trigger(
-                ['chats'], 'deleted', 
+                ['messages'], 'deleted', 
                 change.documentKey._id
-            )}else{
+            )
+        }else{
             console.log("Pusher was not triggered")
         }
-    
+        
     })
+
+
 })
 
 

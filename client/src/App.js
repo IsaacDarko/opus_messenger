@@ -31,7 +31,6 @@ function App() {
       localStorage.setItem('user', JSON.stringify(user));
       console.log(user);
       retrieveUsersChats();
-      retrieveUsersMessages();
     }    
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useAuth0, user]);
@@ -113,59 +112,16 @@ function App() {
 
 
   }
-/*
-  const syncMessagesSecurely = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-      console.log(token);
-      const response = await fetch(
-        `/api/messages/sync`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      const responseData = await response.json();
-
-      setMessages(responseData.message);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-
-  const syncChatsSecurely = async () => {
-    try {
-      const token = await getAccessTokenSilently();
-
-      const response = await fetch(
-        `/api/chats/sync`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const responseData = await response.json();
-
-      setChats(responseData.message);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-  */
 
   
   const fetchChat = () => {
-    const id = localStorage.getItem('chatid')
+    const id = JSON.parse(localStorage.getItem('chatid'))
     console.log(id); 
     if( id !== null || id !== [] || id !== ''){
       axios.get(`/api/messages/chat/${id}`)
       .then(response => {
-        if(response !== null || response !== []){
+        if(response.status === 200 ){
           console.log(response);
           const data = response.data
           console.log(data);
@@ -245,8 +201,8 @@ function App() {
     messageChannel.bind('inserted', function(newMessage) {
       setMessages([...messages, newMessage]);      
     });
-    chatChannel.bind('inserted', function(newChat) {
-      setChats([...chats, newChat]);
+    chatChannel.bind('inserted', function(newMessage) {
+      setChats([...chats, newMessage]);
       fetchChat();
     });
 
