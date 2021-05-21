@@ -6,9 +6,7 @@ const Schema = Mongoose.Schema;
 const ChatsSchema = new Schema({
     recpt_id:{
         type: String,
-        required: true,
-        unique: true
-
+        required: true
     },
     recpt_name:{
         type: String,
@@ -24,8 +22,7 @@ const ChatsSchema = new Schema({
     },
     recpt_mail:{
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     sndrs_mail:{
         type: String,
@@ -39,9 +36,17 @@ const ChatsSchema = new Schema({
         type: String,
         required: false
     },
+    snsndrsdispPic:{
+        type:String,
+        required: false
+    },
     sndrsdispName:{
         type: String,
         required: true,
+    },
+    specialkey:{
+        type: String,
+        required: true
     },
     last_msge:{
         type: String,

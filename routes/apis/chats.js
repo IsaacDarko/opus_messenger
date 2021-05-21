@@ -47,7 +47,16 @@ router.get('/sync', (req, res)=>{
 router.post('/',  (req, res)=>{
     console.log(req.body);
     const freshChat = req.body.options;
-    const newChat = new Chats({
+    const rawKeyFrag1 = freshChat.recpt_id;
+    const rawKeyFrag2 = freshChat.sndrs_id;
+    const keyfrag1String = rawKeyFrag1.split("|").pop();
+    const keyfrag2String = rawKeyFrag2.split("|").pop();
+    console.log(`so we popped both ids to get key fragments and here they are: ${keyfrag1String} and ${keyfrag2String}`);
+    const keyfrag1 = parseInt(keyfrag1String);
+    const keyfrag2 = parseInt(keyfrag2String);    
+    const chatKey = keyfrag1+keyfrag2
+    console.log(chatKey);
+    const convo = [{
         recpt_id: freshChat.recpt_id,
         recpt_name: freshChat.recpt_name,
         sndrs_id: freshChat.sndrs_id,
@@ -57,15 +66,34 @@ router.post('/',  (req, res)=>{
         recptdispName: freshChat.recptdispName,
         recptdispPic: freshChat.recptPicture,
         sndrsdispName: freshChat.sndrsdispName,
+        specialkey: chatKey,
         last_msge: freshChat.last_mesge,
         msges_num: freshChat.numofmsges
-    })
-    newChat.save()
-    .then(chatdeets => {
-    res.status(201).json(chatdeets);
-    console.log("data inserted successfully");
-    }) 
-    .catch(err => console.log(err));
+    },
+    {
+        recpt_id: freshChat.sndrs_id,
+        recpt_name: freshChat.sndrs_name,
+        sndrs_id: freshChat.recpt_id,
+        sndrs_name: freshChat.recpt_name,
+        recpt_mail: freshChat.sndrs_mail,
+        sndrs_mail: freshChat.recpt_mail,
+        recptdispName: freshChat.sndrsdispName,
+        sndrsdispName: freshChat.recptdispName,
+        recptdispPic: freshChat.sndrsPicture,
+        sndrsdispPic: freshChat.recptPicture,
+        specialkey: chatKey,
+        last_msge: freshChat.last_mesge,
+        msges_num: freshChat.numofmsges
+    }
+
+]   
+    Chats.collection.insert(convo, function (err, docs) {
+    if (err){ 
+        return console.error(err);
+    } else {
+        console.log(docs);
+    }
+    });
 
     })
 
@@ -76,11 +104,11 @@ router.post('/',  (req, res)=>{
 //@descr  Gets all of a particular user's chats using their id
 //@access Private
 router.get('/chat/:id', (req, res) =>{
-    console.log(req.params);
+    console.log(req.params.keys);
     const id = req.params.id;
     console.log(id);
-    Chats.find({ 
-        sndrs_name: id
+    Chats.find({  
+        sndrs_id: id     
     }).sort({date: -1})
         .then(chats => res.status(200).json(chats))
     

@@ -8,6 +8,7 @@ import  SearchOutlined from '@material-ui/icons/SearchOutlined';
 import  MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
+import { useAuth0 } from '@auth0/auth0-react'
 
 
 function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, retrieveUsersChats, deleteNow }) {
@@ -17,40 +18,33 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, retrieveUse
     const [ currUserDisp, setCurrUserDisp ] = useState('');
     const [ currUserMail, setCurrUserMail ] = useState('');
     const [ isChatId, setIsChatId ] = useState();
+    const [ chatSpecialKey, setChatSpecialKey ] = useState('');
     const [ currentUserPic,setCurrentUserPic ] = useState('');
-    const [ selectedId, setSelectedId ] = useState();
-    const [ doomedId, setDoomedId ] = useState();
-
-    const user = JSON.parse(localStorage.getItem('user'));
+    const [ selectedId, setSelectedId ] = useState('');
+    const [ doomedId, setDoomedId ] = useState('')
+    const { user } = useAuth0();
     console.log(user);
     const { picture } = user;
 
 
-useEffect(()=>{
-    secureChatId()
-},[currentUserPic])
+    useEffect(()=>{
+        secureChatId()
+    },[currentUserPic])
 
 
     const acquireTarget = () => {
-        const previouslySelected = localStorage.getItem('endangered');
-        console.log(previouslySelected);
-        localStorage.removeItem('endangered');
-        const endangeredItem = localStorage.setItem('endangered', JSON.stringify(selectedId));
+        const endangeredItem = localStorage.setItem('selectedDel', JSON.stringify(selectedId));
         console.log(endangeredItem);
         deleteNow()
     }
+
 
 
     const acquireExile = () => {
-        const previouslySelected = localStorage.getItem('endangered');
-        console.log(previouslySelected);
-        localStorage.removeItem('endangered');
-        const endangeredItem = localStorage.setItem('endangered', JSON.stringify(selectedId));
+        const endangeredItem = localStorage.setItem('selectedBlock', JSON.stringify(doomedId));
         console.log(endangeredItem);
-        deleteNow()
+        blockUser()
     }
-
-
 
 
     const unlock = () =>{
@@ -73,32 +67,28 @@ useEffect(()=>{
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
-
     const secureChatId = (() => {
-        const prevChatId = localStorage.getItem('chatid');
-        console.log(prevChatId);
-        const currChatId = chatid;
-        console.log(currChatId);
-        localStorage.removeItem('chatid');
-        const interrim = localStorage.getItem('chatid ');
-        console.log(interrim);
-        localStorage.setItem('chatid', JSON.stringify(currChatId));
-        const localChatId = localStorage.getItem('chatid');
-        console.log(localChatId)
-        console.log(`saved ${chatid} to localStorage`);
-        fetchChat(); 
-        
+        const currChatId = localStorage.setItem('chatid', JSON.stringify(chatid));
+        const csk = localStorage.setItem('chatSpecialKey', JSON.stringify(chatSpecialKey));
+        const currentChatId = localStorage.getItem('chatid');
+        console.log(currentChatId);
         const currentUser = {
             userid: currUserId,
             name: currUserName,
             displayname: currUserDisp,
             mail: currUserMail,
+            chatspecialkey: csk,
             picture: currentUserPic
         };
-
-        const current = localStorage.setItem('currentUser', JSON.stringify(currentUser))  
+        const current = localStorage.setItem('currentUser', JSON.stringify(currentUser)) 
+        const checker = localStorage.getItem('chatid');
+        const checker2 = localStorage.getItem('chatSecretKey');
         console.log(currentUser);
+        console.log(`chatid: ${checker}, specialkey: ${checker2}`);
+
+        
+        fetchChat(); 
+
     })//where sidebar makes the current receiver's details accessible to all other components
 
 
@@ -108,10 +98,9 @@ useEffect(()=>{
 
 
     return !isChatId ? (
-
         <div className="sidebar">
             <div className="sidebar__header">
-                <Avatar />
+                <Avatar src={picture} />
                 <div className="sidebar__headerRight">
                     <IconButton >
                         <ChatIcon onClick={() => signalModal()} />
@@ -143,7 +132,7 @@ useEffect(()=>{
 
         <div className="sidebar">
             <div className="sidebar__header">
-                <Avatar src={picture}/>
+                <Avatar src={picture} />
                 <div className="sidebar__headerRight">
                     <IconButton>
                         <ChatIcon onClick={() => signalModal()} />
@@ -169,11 +158,12 @@ useEffect(()=>{
             <div className="sidebar__chats">
             {chats.map((chat) => (
                 <div className="sidebarChat" key={ chat._id } value={chatid} id={chat._id} onClick={ (e) => {                
-                    setChatid(chat._id);
-                    setCurrUserId(chat.recpt_id)
+                    setChatid(chat._id)
+                    setCurrUserId(chat._id)
                     setCurrUserName(chat.recpt_name)
                     setCurrUserDisp(chat.recptdispName)
                     setCurrUserMail(chat.recpt_mail)
+                    setChatSpecialKey(chat.specialkey)
                     setCurrentUserPic(chat.recptdispPic)
                 }}>
             
@@ -187,14 +177,14 @@ useEffect(()=>{
                     </div>
 
                     <div className="sidebarChat__right">
-                            <span id={chat._id} className="chat__trash" ><DeleteIcon onClick={(e) => {
+                            <span id={chat.specialkey} className="chat__trash" ><DeleteIcon onClick={(e) => {
                                 setSelectedId(e.target.id)
-                                
+                                acquireTarget()
                                 }}/></span> 
+
                             <span id={chat._id} className="chat__block"> <BlockIcon onClick={(e) => {
-                                setSelectedId(e.target.id)
+                                setDoomedId(e.target.id)                                
                                 acquireExile()
-                                
                                 }} /> </span>
                     </div> 
                     

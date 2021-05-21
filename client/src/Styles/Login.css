@@ -1,0 +1,24 @@
+.login__body {
+    display: grid;
+    place-items: center;
+    background-color: #dadbd3;
+    height: 100vh;
+}
+
+.login__inner{
+    
+    display: grid;
+    background-color: #ededed;
+    height: 50vh;
+    width: 20vw;
+    place-items: center;
+    box-shadow: -1px 4px 20px -6px rgba(0,0,0,0.7);
+    border-radius: 10px;
+}
+
+.login__header {
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 30px;
+    padding: auto;
+    
+}

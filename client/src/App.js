@@ -4,13 +4,14 @@ import { Switch } from 'react-router-dom';
 import Chat from './Components/Chat';
 import Sidebar from './Components/Sidebar';
 import StartChatModal from './Components/StartChatModal';
+import Login from './Components/Login';
 import Pusher from "pusher-js";
 import axios from './axios';
 import { useAuth0 } from '@auth0/auth0-react'
 import ProtectedRoute from './auth/protected-route';
 
 function App() {
-  const { user } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth0();
   const [ show, setShow ] = useState();
   const [contactlist, setContactlist] = useState([]);
   const [ gotId, setGotId ] = useState(false);
@@ -70,7 +71,7 @@ function App() {
   const retrieveUsersChats = () =>{
     const myself = user
     console.log(myself)
-    const id = myself.name;
+    const id = myself.sub;
     console.log(id);
     axios.get(`api/chats/chat/${id}`)
     .then(res =>{
@@ -87,26 +88,29 @@ function App() {
 
 
   const blockUser = () => {
-    const userid = localStorage.get('endangered');
+    const userid = localStorage.getItem('selectedBlock');
     const blockersDeets = JSON.parse(localStorage.getItem('user'));
     const { blockersname, blockersmail, blockersdisplay } = blockersDeets
-    const blockeesDeets = JSON.parse(localStorage.getItem('user'));
-    const { blockeesid, blockeesname, blockeesmail, blockeesdisplay } = blockeesDeets
+    const blockeesDeets = JSON.parse(localStorage.getItem('currentUser'));
+    const { name, mail, displayname } = blockeesDeets
+
+
     const options = {
-      blocker_id:userid,
-      blocker_name:blockersname,
-      blockee_id:blockeesid,
-      blockee_name:blockeesname,
-      blocker_mail:blockersmail,
-      blockee_mail:blockeesmail,
-      blocker_dispName:blockersdisplay,
-      blockee_dispName:blockeesdisplay,
+      blocker_id: userid,
+      blocker_name: blockersname,
+      blocker_mail: blockersmail,
+      blocker_dispName: blockersdisplay,
+      blockee_id: userid,
+      blockee_name: name,
+      blockee_mail: mail,
+      blockee_dispName: displayname
       
     }
     axios.post('api/users/block/:id', {
       options
     }).then((res)=>{
       console.log(res)
+      localStorage.removeItem('selectedBlock')
     })
 
 
@@ -116,10 +120,12 @@ function App() {
 
   
   const fetchChat = () => {
-    const id = JSON.parse(localStorage.getItem('chatid'))
-    console.log(id); 
-    if( id !== null || id !== [] || id !== ''){
-      axios.get(`/api/messages/chat/${id}`)
+    const id = localStorage.getItem('chatid');
+    const csk = localStorage.getItem('chatSpecialKey');
+    console.log(id);
+    console.log(csk);    
+    if( csk !== null || csk !== [] || csk !== ''){
+      axios.get(`/api/messages/chat/${csk}`)
       .then(response => {
         if(response.status === 200 ){
           console.log(response);
@@ -177,9 +183,9 @@ function App() {
 
 
   const deleteNow = () => {
-    const chatid = localStorage.getItem('endangered');
-    console.log(chatid);
-    axios.delete(`api/chats/${chatid}`)
+    const csk = localStorage.getItem('selectedDel');
+    console.log(csk);
+    axios.delete(`api/chats/${csk}`)
     .then(res => {
       console.log(res)
       alert('Chat Deleted')
@@ -221,7 +227,8 @@ function App() {
 
 
 
-  return (
+  return isAuthenticated ? (
+
     //using the BEM naming convention
     <div className="app">
 
@@ -242,6 +249,9 @@ function App() {
       </div>
 
     </div>  
+    
+  ):(
+      <Login />
   )}
 
 export default App;

@@ -18,19 +18,23 @@ const UserMessageSchema = new Schema({
     },
     senderid:{
         type: String,
-        required: false
+        required: true
     },
     senderdispname:{
         type: String,
-        required: false
+        required: true
     },
     receivername:{
         type: String,
-        required: false
+        required: true
     },
     receiverdispname:{
         type: String,
-        required: false
+        required: true
+    },
+    chatspecialkey:{
+        type: String,
+        required: true
     },
     timestamp:{
         type: Date,

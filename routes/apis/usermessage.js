@@ -55,8 +55,8 @@ router.get('/chat/:id', (req, res)=>{
     const id =  req.params.id;
     console.log(id);
     UserMessage.find({
-        chatid:id
-    })
+        chatspecialkey:id
+    }).sort({date: -1})
     .then(chatmessages => {
         console.log(chatmessages);
         res.status(200).json(chatmessages);
@@ -81,16 +81,17 @@ router.post('/', (req, res)=>{
         chatid: req.body.chatid,
         message: req.body.message,
         sendername: req.body.name,        
-        senderid: req.senderid,
-        senderdispname: req.senderdispname,
-        receivername: req.receivername,
-        receiverdispname: req.receiverdispname
+        senderid: req.body.senderid,
+        senderdispname: req.body.sndrsdispname,
+        receivername: req.body.receivername,
+        chatspecialkey: req.body.chatSpecialKey,
+        receiverdispname: req.body.receiverdispname
 
     });
     newUserMessage.save()
     .then(usermessage => {res.status(201).json(usermessage)
     console.log("data inserted successfully");
-    }).catch(err => res.status(404).json({success: false}));
+    }).catch(err => console.log(err));
 });
 
 

@@ -39,6 +39,8 @@ const StartChatModal = (props) => {
             'recptdispName' : dispName,
             'recptPicture' : dispPic,
             'sndrsdispName':user.nickname,
+            'sndrsPicture':user.picture,
+            'secretKey':"'on its way",
             'last_mesge' : "",
             'numofmsges' : 0
         }

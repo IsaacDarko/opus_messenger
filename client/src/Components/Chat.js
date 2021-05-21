@@ -21,6 +21,8 @@ const Chat = (props) => {
     const chatid = localStorage.getItem('chatId');
 
 
+
+
     const unlock = () =>{
         if(chatid === "" || chatid === undefined){
             setIsChatId(false);
@@ -34,10 +36,13 @@ const Chat = (props) => {
 
     const sendMessage = (e) => {
         e.preventDefault(); 
+        const chatid = localStorage.getItem('chatid');
+        const specialkey= localStorage.getItem('chatSpecialKey');
         const details = JSON.parse(localStorage.getItem('currentUser'));
         console.log(details);
+        console.log(details.displayname);
+        console.log(chatid);
         if (chatid !== null || chatid !== ''){
-            console.log(chatid)
             axios.post('/api/messages', {
                 chatid: chatid,            
                 message: input,
@@ -46,7 +51,8 @@ const Chat = (props) => {
                 sndrsdispname:user.nickname,
                 receivername:details.name,
                 receiverspic: details.pic,
-                receiverdispname:details.displayname
+                receiverdispname:details.displayname,
+                chatSpecialKey: specialkey
                 
             }).then( response =>{
                 setInput("");
@@ -138,7 +144,7 @@ const Chat = (props) => {
                     <div className="chat__body">
                         {messages.map((message) => (
                             <div className="message__container" key={message._id}>
-                                <p className={`chat__message ${user.name === message.name && 'sender__myself'}`}>
+                                <p className={`chat__message ${user.name !== message.receivername && 'sender__myself'}`}>
                                     <span className="chat__name">{message.name}</span>
                                         {message.message}
                                     <span className="chat__timestamp">
