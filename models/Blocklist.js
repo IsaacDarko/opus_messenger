@@ -39,6 +39,10 @@ const BlocklistSchema = new Schema({
         type: String,
         required: true,
     },
+    chatid:{
+        type: String,
+        required:false
+    },
     reason:{
         type: String,
         required: false

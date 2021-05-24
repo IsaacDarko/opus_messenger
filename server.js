@@ -93,6 +93,7 @@ dbStream.once("open", ()=>{
                 recpt_mail: chatDetails.recpt_mail, //this is what pusher sends from the changeDocument to frontend
                 sndrs_mail : chatDetails.sndrs_mail,//this is what pusher sends from the changeDocument to frontend
                 recptdispName: chatDetails.recptdispName,//this is what pusher sends from the changeDocument to frontend
+                recptdispPic: chatDetails.recptdispPic,//this is what pusher sends from the changeDocument to frontend
                 last_msge : chatDetails.last_msge,  //this is what pusher sends from the changeDocument to frontend
                 chatid: chatDetails.chatid,         //this is what pusher sends from the changeDocument to frontend
                 msges_num : chatDetails.msges_num,  //this is what pusher sends from the changeDocument to frontend

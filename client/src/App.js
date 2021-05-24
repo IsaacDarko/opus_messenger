@@ -20,10 +20,15 @@ function App() {
   const [ messages, setMessages ] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [ loggedInUser, setLoggedInUser ] = useState({});
+  const [ myBlockees, setMyBlockees ] = useState([]);
+  const [ currentChat, setCurrentChat ] = useState([]);
 
   useEffect(()=>{
-    storageChecker()
-  })
+    storageChecker();
+    setCurrentChat();
+    chatRejuvinate();
+  }, [])
+
 
   useEffect(()=>{
     if(user === undefined || user === []){  
@@ -32,7 +37,7 @@ function App() {
       localStorage.setItem('user', JSON.stringify(user));
       console.log(user);
       retrieveUsersChats();
-    }    
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useAuth0, user]);
 
@@ -44,6 +49,37 @@ function App() {
 
     console.log(`Okay so these are your local storage variables-- chatid:${chatidChecker}, user details:${userChecker}, messages:${messagesChecker}`)
   }
+
+
+
+
+
+  const chatRejuvinate = () => {
+    const recpt = JSON.parse(localStorage.getItem('currentUser'));
+    console.log(recpt)
+    const recptid = recpt.userid;
+    console.log(recptid)
+    axios.get('api/users/sync')
+    .then(res =>{
+      console.log(res)
+      const users = res.data;
+      console.log(users);
+      const currUser = users.filter(user => {
+        return user.user_id === recptid
+      })
+      console.log(currUser);
+      setCurrentChat(currUser);
+      console.log(currentChat)
+    }).catch(err => console.log(err))
+  }
+
+
+
+
+
+  useEffect(()=>{
+    console.log(currentChat)
+  }, [currentChat])
 
 
 
@@ -77,6 +113,9 @@ function App() {
     .then(res =>{
       console.log(res.data);
       setChats(res.data)
+      const currChat = res.data;
+      console.log(currChat)
+      setCurrentChat(currChat);
     }).catch(err => console.log(`there was an API Error : ${err}`));
   }
 
@@ -88,33 +127,23 @@ function App() {
 
 
   const blockUser = () => {
-    const userid = localStorage.getItem('selectedBlock');
-    const blockersDeets = JSON.parse(localStorage.getItem('user'));
-    const { blockersname, blockersmail, blockersdisplay } = blockersDeets
-    const blockeesDeets = JSON.parse(localStorage.getItem('currentUser'));
-    const { name, mail, displayname } = blockeesDeets
-
-
-    const options = {
-      blocker_id: userid,
-      blocker_name: blockersname,
-      blocker_mail: blockersmail,
-      blocker_dispName: blockersdisplay,
-      blockee_id: userid,
-      blockee_name: name,
-      blockee_mail: mail,
-      blockee_dispName: displayname
-      
-    }
-    axios.post('api/users/block/:id', {
+    const options = JSON.parse(localStorage.getItem('selectedBlock'));
+    console.log(options)
+    axios.post('api/users/block/', {
       options
     }).then((res)=>{
       console.log(res)
+      const blockee = res.data
+      const newBlockeeid = blockee.id;
+      const blockeename = blockee.name;
+      setMyBlockees([...myBlockees, newBlockeeid]);
       localStorage.removeItem('selectedBlock')
+      localStorage.setItem('myblockers',JSON.stringify(myBlockees));
+      const hated = localStorage.getItem('myblockers');
+      console.log(hated);
+      alert(`You have just blocked ${blockeename}`)
     })
-
-
-
+    .catch(err => console.log('Block Attempt Failed'))
   }
 
 
@@ -183,9 +212,9 @@ function App() {
 
 
   const deleteNow = () => {
-    const csk = localStorage.getItem('selectedDel');
-    console.log(csk);
-    axios.delete(`api/chats/${csk}`)
+    const id = localStorage.getItem('selectedDel');
+    console.log(id);
+    axios.delete(`api/chats/${id}`)
     .then(res => {
       console.log(res)
       alert('Chat Deleted')
@@ -205,13 +234,14 @@ function App() {
     const chatChannel = pusher.subscribe('chats');
 
     messageChannel.bind('inserted', function(newMessage) {
-      setMessages([...messages, newMessage]);      
+      setMessages([...messages, newMessage]);
+      console.log(newMessage)      
     });
-    chatChannel.bind('inserted', function(newMessage) {
-      setChats([...chats, newMessage]);
+    chatChannel.bind('inserted', function(newChat) {
+      setChats([...chats, newChat]);
+      console.log(newChat)
       fetchChat();
     });
-
     return () => {
       messageChannel.unbind_all();
       messageChannel.unsubscribe();
@@ -239,8 +269,8 @@ function App() {
               <ProtectedRoute exact path="/" component={Chat}>
 
                 <StartChatModal contactlist={contactlist} show={show} setShow={setShow} switchOff={switchOff} selectUser={selectUser} />
-                <Sidebar  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
-                <Chat messages={messages} user={user} chats={chats} chatId={chatId} setMessages={setMessages} />
+                <Sidebar chatRejuvinate={chatRejuvinate}  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
+                <Chat chatRejuvinate={chatRejuvinate} currentChat={currentChat} messages={messages} user={user} chats={chats} chatId={chatId} setMessages={setMessages} />
                 
               </ProtectedRoute>
               

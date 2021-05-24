@@ -26,6 +26,9 @@ const pusher = new Pusher({
     useTLS: true
 });
 
+
+
+
 //@route  GET api/chats/sync
 //@descr  Gets all user chats
 //@access Private
@@ -52,25 +55,11 @@ router.post('/',  (req, res)=>{
     const keyfrag1String = rawKeyFrag1.split("|").pop();
     const keyfrag2String = rawKeyFrag2.split("|").pop();
     console.log(`so we popped both ids to get key fragments and here they are: ${keyfrag1String} and ${keyfrag2String}`);
-    const keyfrag1 = parseInt(keyfrag1String);
-    const keyfrag2 = parseInt(keyfrag2String);    
-    const chatKey = keyfrag1+keyfrag2
+    const keyfrag1 = keyfrag1String;
+    const keyfrag2 = keyfrag2String;    
+    const chatKey = keyfrag1+keyfrag2;
     console.log(chatKey);
     const convo = [{
-        recpt_id: freshChat.recpt_id,
-        recpt_name: freshChat.recpt_name,
-        sndrs_id: freshChat.sndrs_id,
-        sndrs_name: freshChat.sndrs_name,
-        recpt_mail: freshChat.recpt_mail,
-        sndrs_mail: freshChat.sndrs_mail,
-        recptdispName: freshChat.recptdispName,
-        recptdispPic: freshChat.recptPicture,
-        sndrsdispName: freshChat.sndrsdispName,
-        specialkey: chatKey,
-        last_msge: freshChat.last_mesge,
-        msges_num: freshChat.numofmsges
-    },
-    {
         recpt_id: freshChat.sndrs_id,
         recpt_name: freshChat.sndrs_name,
         sndrs_id: freshChat.recpt_id,
@@ -81,6 +70,20 @@ router.post('/',  (req, res)=>{
         sndrsdispName: freshChat.recptdispName,
         recptdispPic: freshChat.sndrsPicture,
         sndrsdispPic: freshChat.recptPicture,
+        specialkey: chatKey,
+        last_msge: freshChat.last_mesge,
+        msges_num: freshChat.numofmsges
+    },
+    {
+        recpt_id: freshChat.recpt_id,
+        recpt_name: freshChat.recpt_name,
+        sndrs_id: freshChat.sndrs_id,
+        sndrs_name: freshChat.sndrs_name,
+        recpt_mail: freshChat.recpt_mail,
+        sndrs_mail: freshChat.sndrs_mail,
+        recptdispName: freshChat.recptdispName,
+        recptdispPic: freshChat.recptPicture,
+        sndrsdispName: freshChat.sndrsdispName,
         specialkey: chatKey,
         last_msge: freshChat.last_mesge,
         msges_num: freshChat.numofmsges
@@ -120,9 +123,18 @@ router.get('/chat/:id', (req, res) =>{
 //@descr  Deletes a chat
 //@access Private
 router.delete('/:id', (req, res)=>{
-    Chats.findById(req.params.id)
-    .then(chat => chat.remove().then(() => res.json({success:true})))
-    .catch(err => res.status(404).json({success: false}));
+    console.log(req.params)
+    const csk = req.params.id
+    console.log(csk);
+    Chats.deleteMany({
+        specialkey:csk
+    })
+    .then(chat =>
+        console.log(chat))
+    .catch((err) => {
+        console.log(err)
+        res.json({success:false})
+    })
 });
 
 

@@ -11,6 +11,10 @@ import Loading from './Loading';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 const Chat = (props) => { 
+    const { chatRejuvinate } = props;
+    const {currentChat} = props;
+    const { picture, name, last_login } = currentChat[0]
+    console.log(currentChat[0]);
     const { messages } = props;
     const { user } = useAuth0();
     console.log(user);
@@ -19,8 +23,6 @@ const Chat = (props) => {
     const [ currRecpt, setCurrRecpt ] = useState({});
     const [ isChatId, setIsChatId ] = useState();
     const chatid = localStorage.getItem('chatId');
-
-
 
 
     const unlock = () =>{
@@ -81,7 +83,7 @@ const Chat = (props) => {
                         <Avatar />
 
                         <div className="chat__headerInfo">
-                            <h3>Contact Name</h3>
+                            <h3>Name</h3>
                             <p>Last Seen Online....</p>
                         </div>
 
@@ -121,11 +123,11 @@ const Chat = (props) => {
                 <div className="chat">
 
                     <div className="chat__header">
-                        <Avatar src={`${currRecpt.picture}`} />
+                        <Avatar src={picture} />
 
                         <div className="chat__headerInfo">
-                            <h3>{currRecpt.name}</h3>
-                            <p>Last Seen Online....</p>
+                            <h3>{name}</h3>
+                            <p><h5>Last Seen: </h5>{last_login}....</p>
                         </div>
 
                         <div className="chat__headerRight">

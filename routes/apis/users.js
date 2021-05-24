@@ -21,6 +21,23 @@ axios.request(options).then(function (response) {
 });
 
 
+//@route  GET api/users/set
+//@descr  Checks if anyone has blocked user
+//@access Private
+router.get('/set/:id', (req, res)=>{
+    const id = req.params.id
+    Block.find({
+        blockee_id:id
+    })
+    .sort({date: 1})
+    .then(response => {
+        console.log(response.data)
+        res.status(200).json(response);
+    })
+    .catch(err => res.json({success: false}));
+});
+
+
 
 //@route  GET api/users/sync
 //@descr  Gets all users
@@ -75,8 +92,8 @@ router.delete('/:id', (req, res)=>{
 //@route  POST api/users/block
 //@descr  Allows for blocking a user using their id
 //@access Private
-router.post('apis/users/block',(req,res)=>{
-    const deets = req.body.deets;
+router.post('/block',(req,res)=>{
+    const deets = req.body.options;
     console.log(deets)
     const newBlock = new Block({
 
@@ -97,7 +114,20 @@ router.post('apis/users/block',(req,res)=>{
     res.status(201).json(chatdeets);
     }) 
     .catch(err => console.log(err));
+})
 
+
+//@route  DELETE api/users/unblock
+//@descr  Allows for unblocking a user using their id
+//@access Private
+router.delete('apis/users/unblock',(req,res)=>{
+    Block.findById(req.params.id)
+    .then(entry => 
+        entry.remove()
+        .then(() => res.status(200).json({success:true}))
+        .catch(err => console.log(err))
+        )
+    .catch(err => console.log(err));
 })
 
 
