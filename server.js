@@ -101,7 +101,7 @@ dbStream.once("open", ()=>{
             })
         }else if(change.operationType === 'deleted'){
             pusher.trigger(
-                ['messages'], 'deleted', 
+                ['chats'], 'deleted', 
                 change.documentKey._id
             )
         }else{

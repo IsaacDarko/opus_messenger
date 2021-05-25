@@ -216,12 +216,14 @@ function App() {
 
 
   const deleteNow = () => {
-    const id = localStorage.getItem('selectedDel');
-    console.log(id);
+    const rawId = localStorage.getItem('selectedDel');
+    console.log(rawId);
+    const id = rawId.replace(/^"(.*)"$/, '$1');
     axios.delete(`api/chats/${id}`)
     .then(res => {
       console.log(res)
-      alert('Chat Deleted')
+      alert(res.data)
+      retrieveUsersChats()
     })
   }
 

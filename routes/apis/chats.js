@@ -8,6 +8,7 @@ const cors = require('cors');
 
 //retrieving model
 const Chats = require('../../models/Chats');
+const UserMessage = require('../../models/UserMessage');
 
 //initialising express
 const app = Express();
@@ -34,7 +35,7 @@ const pusher = new Pusher({
 //@access Private
 router.get('/sync', (req, res)=>{
     Chats.find()
-    .sort({date: -1})
+    .sort({date: 1})
     .then(response => {
         console.log(response.data)
         res.status(200).json(response);
@@ -112,7 +113,7 @@ router.get('/chat/:id', (req, res) =>{
     console.log(id);
     Chats.find({  
         sndrs_id: id     
-    }).sort({date: -1})
+    }).sort({date: 1})
         .then(chats => res.status(200).json(chats))
     
 });
@@ -131,6 +132,7 @@ router.delete('/:id', (req, res)=>{
     })
     .then(chat =>
         console.log(chat))
+        res.status(200).json("Deleted")
     .catch((err) => {
         console.log(err)
         res.json({success:false})
