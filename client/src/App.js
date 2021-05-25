@@ -15,25 +15,24 @@ function App() {
   const [ show, setShow ] = useState();
   const [contactlist, setContactlist] = useState([]);
   const [ gotId, setGotId ] = useState(false);
-  const [chatId, setChatId] = useState();
+  const [chatId, setChatId] = useState('');
   const [ chats, setChats ] = useState([]);
   const [ messages, setMessages ] = useState([]);
   // eslint-disable-next-line no-unused-vars
   const [ loggedInUser, setLoggedInUser ] = useState({});
   const [ myBlockees, setMyBlockees ] = useState([]);
-  const [ currentChat, setCurrentChat ] = useState([]);
+  const [ currentChat, setCurrentChat ] = useState({
+    name:'Name', picutue:'', last_login:'today'
+  });
 
   useEffect(()=>{
-    storageChecker();
-    setCurrentChat();
-    chatRejuvinate();
-  }, [])
-
-
-  useEffect(()=>{
+    console.log(user)
+    setCurrentChat([{picture:'', name:'', last_login:''}]);
     if(user === undefined || user === []){  
-      setLoggedInUser(user);    
+      setLoggedInUser(user);
     }else{
+      
+    setCurrentChat([{picture:'', name:'', last_login:''}]);
       localStorage.setItem('user', JSON.stringify(user));
       console.log(user);
       retrieveUsersChats();
@@ -56,6 +55,9 @@ function App() {
 
   const chatRejuvinate = () => {
     const recpt = JSON.parse(localStorage.getItem('currentUser'));
+    const chatid = localStorage.getItem('chatid');
+    console.log(chatid)
+    setChatId(chatid)
     console.log(recpt)
     const recptid = recpt.userid;
     console.log(recptid)
@@ -64,12 +66,14 @@ function App() {
       console.log(res)
       const users = res.data;
       console.log(users);
-      const currUser = users.filter(user => {
+      let currUser = {};
+      currUser = users.find(user => {
         return user.user_id === recptid
       })
       console.log(currUser);
       setCurrentChat(currUser);
       console.log(currentChat)
+      localStorage.setItem('currentChat', JSON.stringify(currUser))
     }).catch(err => console.log(err))
   }
 
@@ -113,9 +117,9 @@ function App() {
     .then(res =>{
       console.log(res.data);
       setChats(res.data)
-      const currChat = res.data;
-      console.log(currChat)
-      setCurrentChat(currChat);
+      const currChat = res.data[0];
+      console.log(currChat);
+      localStorage.setItem('currentChat', JSON.stringify(currChat))
     }).catch(err => console.log(`there was an API Error : ${err}`));
   }
 
@@ -269,8 +273,8 @@ function App() {
               <ProtectedRoute exact path="/" component={Chat}>
 
                 <StartChatModal contactlist={contactlist} show={show} setShow={setShow} switchOff={switchOff} selectUser={selectUser} />
-                <Sidebar chatRejuvinate={chatRejuvinate}  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
-                <Chat chatRejuvinate={chatRejuvinate} currentChat={currentChat} messages={messages} user={user} chats={chats} chatId={chatId} setMessages={setMessages} />
+                <Sidebar chatid={chatId} setChatId={setChatId} chatRejuvinate={chatRejuvinate}  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
+                <Chat chatId={chatId} setChatId={setChatId} chatRejuvinate={chatRejuvinate} currentChat={currentChat} messages={messages} user={user} chats={chats} chatId={chatId} setMessages={setMessages} />
                 
               </ProtectedRoute>
               

@@ -11,27 +11,58 @@ import Loading from './Loading';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 const Chat = (props) => { 
-    const { chatRejuvinate } = props;
-    const {currentChat} = props;
-    const { picture, name, last_login } = currentChat[0]
-    console.log(currentChat[0]);
+    const { user, isAuthenticated, isLoading } = useAuth0();
+    const { chatId } = props;
+    const { currentChat } = props;
+    const [endPicture, setEndPicture] = useState('');
+    const [endName, setEndName] = useState('');
+    const [endLastSeen, setEndLastSeen] = useState('')
     const { messages } = props;
-    const { user } = useAuth0();
     console.log(user);
     console.log(messages);
     const [input, setInput] = useState("");
     const [ currRecpt, setCurrRecpt ] = useState({});
     const [ isChatId, setIsChatId ] = useState();
-    const chatid = localStorage.getItem('chatId');
+    
+
+    
+    useEffect(() =>{
+        unlock()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+        const current = JSON.parse(localStorage.getItem('currentUser'));
+        console.log(current.picture);
+        setCurrRecpt(current);
+        setup();
+    }, []);
+
+
+    useEffect(() =>{
+        setup();
+    }, [currentChat, endPicture, endName, endLastSeen]);
 
 
     const unlock = () =>{
-        if(chatid === "" || chatid === undefined){
-            setIsChatId(false);
+        if( chatId === undefined ){
+            console.log(isChatId);
             console.log('ChatPage Unlock Failed...No chats exist in this account')
         }else{
             setIsChatId(true);
             console.log('ChatPage Unlock Successful')
+        }
+    }
+
+    const setup = () =>{
+        console.log(chatId);
+        if(currentChat === undefined || currentChat === null){
+            setEndPicture('')
+            setEndName('Name')
+            setEndLastSeen('Recently')
+        }
+        else{           
+            const { picture, name, last_login } = currentChat;
+            setEndPicture(picture)
+            setEndName(name)
+            setEndLastSeen(last_login)
         }
     }
 
@@ -67,24 +98,18 @@ const Chat = (props) => {
     }
 
 
-    useEffect(() =>{
-        unlock()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-        const current = JSON.parse(localStorage.getItem('currentUser'));
-        console.log(current.picture);
-        setCurrRecpt(current);
-    }, []);
 
 
 
-    return !isChatId ? (
+    return !chatId ? (
                 <div className="chat">
+
                     <div className="chat__header">
                         <Avatar />
 
                         <div className="chat__headerInfo">
                             <h3>Name</h3>
-                            <p>Last Seen Online....</p>
+                            <p><h5>Last Seen: </h5>....</p>
                         </div>
 
                         <div className="chat__headerRight">
@@ -123,11 +148,11 @@ const Chat = (props) => {
                 <div className="chat">
 
                     <div className="chat__header">
-                        <Avatar src={picture} />
+                        <Avatar src={endPicture} />
 
                         <div className="chat__headerInfo">
-                            <h3>{name}</h3>
-                            <p><h5>Last Seen: </h5>{last_login}....</p>
+                            <h3>{endName}</h3>
+                            <p><h5>Last Seen: </h5>{endLastSeen}....</p>
                         </div>
 
                         <div className="chat__headerRight">
