@@ -8,13 +8,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
+    z-index: 20;    
 }
 
 .modal__body{
     overflow: scroll;
     background-color: rgba(255,255,255,0.2);
-    height: 60vh;
+    height: 90vh;
     width: 20vw;
     border-radius: 20px;
     overflow-y:auto;
@@ -45,3 +45,13 @@
     background-color: #ebebeb;
 
 }
+
+.user__select{
+    padding:5px;
+    margin:5px;
+}
+
+.user__select:hover{
+    background-color: #ebebeb;
+}
+

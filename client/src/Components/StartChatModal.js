@@ -68,7 +68,7 @@ const StartChatModal = (props) => {
         
             <div className="modal__wrapper" onClick={ () => toggle() }>
                 <div className="modal__inner">
-                    <div className="modal__body">
+                    <div className="modal__body" style={{zIndex:1}}>
                         { contactlist.map((contact) =>  (                        
                             <div className="user__select" key={ contact.user_id } onClick={() => {      
                                     setRecptId(`${contact.user_id}`);

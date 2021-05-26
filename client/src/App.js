@@ -184,11 +184,24 @@ function App() {
     console.log(user)
     const { sub } = user;
     console.log(sub);
+    const id = sub
+    axios.get(`api/users/set/${id}`)
+    .then(response=>{
+      const enemy = response.data;
+      console.log(enemy);
+      const enemy_id = enemy.blocker_id;
+      console.log(enemy_id)
       axios.get('api/users/sync')
       .then(res => {
-        console.log(res.data);
+        console.log(enemy_id);
+        const contacts = res.data;
+        const friends = contacts.filter(contact => {
+          return user.user_id !== enemy_id
+        })
+        console.log(friends)
         setContactlist(res.data); 
       })
+    })      
   }
 
 

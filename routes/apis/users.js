@@ -21,11 +21,12 @@ axios.request(options).then(function (response) {
 });
 
 
-//@route  GET api/users/set
+//@route  GET api/users/set/
 //@descr  Checks if anyone has blocked user
 //@access Private
 router.get('/set/:id', (req, res)=>{
     const id = req.params.id
+    console.log(id);
     Block.find({
         blockee_id:id
     })
