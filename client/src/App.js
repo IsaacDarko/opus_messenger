@@ -138,13 +138,9 @@ function App() {
     }).then((res)=>{
       console.log(res)
       const blockee = res.data
-      const newBlockeeid = blockee.id;
+      const blockeeid = blockee.id;
       const blockeename = blockee.name;
-      setMyBlockees([...myBlockees, newBlockeeid]);
-      localStorage.removeItem('selectedBlock')
-      localStorage.setItem('myblockers',JSON.stringify(myBlockees));
-      const hated = localStorage.getItem('myblockers');
-      console.log(hated);
+      console.log(`alright so these are new blockeeid: ${blockeeid} and their name is ${blockeename}`);
       alert(`You have just blocked ${blockeename}`)
     })
     .catch(err => console.log('Block Attempt Failed'))
@@ -189,19 +185,25 @@ function App() {
     .then(response=>{
       const enemy = response.data;
       console.log(enemy);
-      const enemy_id = enemy.blocker_id;
-      console.log(enemy_id)
+      const enemy_ids = enemy.reduce(
+        (arr, elem)=> arr.concat(elem.blocker_id),[]
+        );
+      console.log(enemy_ids)
       axios.get('api/users/sync')
       .then(res => {
-        console.log(enemy_id);
+        console.log(enemy_ids);
         const contacts = res.data;
-        const friends = contacts.filter(contact => {
-          return user.user_id !== enemy_id
-        })
-        console.log(friends)
-        setContactlist(res.data); 
-      })
-    })      
+        console.log(contacts)
+        for(let i = 0; i < enemy_ids.length; i++){
+            const enemy_id = enemy_ids[i];
+            const friends = contacts.filter(contact => 
+              contact.user_id !== enemy_id && contact.user_id !== sub
+            ) 
+            console.log(friends);
+            setContactlist(friends);
+        } 
+      })     
+    })
   }
 
 

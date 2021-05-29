@@ -9,6 +9,8 @@ const cors = require('cors');
 //retrieving model
 const Chats = require('../../models/Chats');
 const UserMessage = require('../../models/UserMessage');
+const Users = require('../../models/Users.js');
+const Block = require('../../models/Blocklist');
 
 //initialising express
 const app = Express();
@@ -111,12 +113,21 @@ router.get('/chat/:id', (req, res) =>{
     console.log(req.params.keys);
     const id = req.params.id;
     console.log(id);
-    Chats.find({  
-        sndrs_id: id     
-    }).sort({date: 1})
-        .then(chats => res.status(200).json(chats))
-    
-});
+    Block.find({
+        blockeeid:id
+    }).then( blocklist =>{
+        console.log(blocklist);
+        const blockerid = blocklist.blocker_id
+        console.log(blockerid)
+        Chats.find({  
+            sndrs_id: id     
+        })
+        .sort({date: 1})
+        .then( chats => {            
+            res.status(200).json(chats) 
+        })
+    })
+})
 
 
 

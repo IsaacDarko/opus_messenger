@@ -153,10 +153,8 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
         console.log(currentUser);
         console.log(`chatid: ${checker}, specialkey: ${checker2}`);
 
-        
-        fetchChat(); 
         chatRejuvinate()
-
+        fetchChat(); 
     })//where sidebar makes the current receiver's details accessible to all other components
 
 
