@@ -52,6 +52,11 @@ const ChatsSchema = new Schema({
         type: String,
         required: false
     },
+    blocked:{
+        type: Boolean,
+        required: true,
+        default: false
+    },
     msges_num:{
         type: Number,
         required: false

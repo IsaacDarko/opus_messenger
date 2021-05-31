@@ -6,8 +6,7 @@ const Schema = Mongoose.Schema;
 const BlocklistSchema = new Schema({
     blocker_id:{
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     blocker_name:{
         type: String,
@@ -37,11 +36,12 @@ const BlocklistSchema = new Schema({
     },
     blockee_dispName:{
         type: String,
-        required: true,
+        required: false,
     },
     chatid:{
         type: String,
-        required:false
+        required:false,
+        unique: true
     },
     reason:{
         type: String,

@@ -27,10 +27,11 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
     const [blockeeId, setBlockeeId] = useState('');
     const [blockername, setBlockername] = useState('');
     const [blockeename, setBlockeename] = useState('');
-    const [blockermail, setBlockermail] = useState('')
-    const [blockeemail, setBlockeemail] = useState('')
-    const [blockerDispName, setBlockerDispName] = useState('')
-    const [blockeeDispName, setBlockeeDispName] = useState('')
+    const [blockermail, setBlockermail] = useState('');
+    const [blockeemail, setBlockeemail] = useState('');
+    const [blockedSpecialKey, setBlockedSpecialKey] = useState('');
+    const [blockerDispName, setBlockerDispName] = useState('');
+    const [blockeeDispName, setBlockeeDispName] = useState('');
 
 //declaring state holders for the delete callback function variables
     const [ selectedId, setSelectedId ] = useState('');
@@ -75,7 +76,8 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
             blocker_mail: blockermail,
             blockee_mail: blockeemail,
             blocker_dispName: blockerDispName,
-            blockee_dispName: blockeeDispName   
+            blockee_dispName: blockeeDispName,
+            chatSpecialKey:blockedSpecialKey
         }
         console.log(blockCert);
         const endangeredItem = localStorage.setItem('selectedBlock', JSON.stringify(blockCert));
@@ -223,7 +225,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
 
             <div className="sidebar__chats">
             {chats.map((chat) => (
-                <div className="sidebarChat" key={ chat._id } value={chatid} id={chat._id}>
+                <div className={`sidebarChat ${chat.blocked === true && 'sidebar__blockedChat'}`} key={ chat._id } value={chatid} id={chat._id}>
             
                     <div className="sidebarChat__left">
                         <Avatar src={`${chat.recptdispPic}`}/>
@@ -260,6 +262,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
                                 setBlockeemail(chat.recpt_mail)
                                 setBlockerDispName(chat.sndrsdispName)
                                 setBlockeeDispName(chat.recptdispName)
+                                setBlockedSpecialKey(chat.specialkey)
                                 setBlockClicked(true)
                                 }} /> </span>
                     </div> 

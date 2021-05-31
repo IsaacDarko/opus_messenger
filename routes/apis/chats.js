@@ -37,7 +37,7 @@ const pusher = new Pusher({
 //@access Private
 router.get('/sync', (req, res)=>{
     Chats.find()
-    .sort({date: 1})
+    .sort({date: -1})
     .then(response => {
         console.log(response.data)
         res.status(200).json(response);
@@ -74,6 +74,7 @@ router.post('/',  (req, res)=>{
         recptdispPic: freshChat.sndrsPicture,
         sndrsdispPic: freshChat.recptPicture,
         specialkey: chatKey,
+        blocked: false,
         last_msge: freshChat.last_mesge,
         msges_num: freshChat.numofmsges
     },
@@ -88,16 +89,18 @@ router.post('/',  (req, res)=>{
         recptdispPic: freshChat.recptPicture,
         sndrsdispName: freshChat.sndrsdispName,
         specialkey: chatKey,
+        blocked: false,
         last_msge: freshChat.last_mesge,
         msges_num: freshChat.numofmsges
     }
 
 ]   
-    Chats.collection.insert(convo, function (err, docs) {
+    Chats.collection.insertMany(convo, function (err, docs) {
     if (err){ 
         return console.error(err);
     } else {
         console.log(docs);
+        res.status(200).json("chat created")
     }
     });
 
@@ -113,19 +116,12 @@ router.get('/chat/:id', (req, res) =>{
     console.log(req.params.keys);
     const id = req.params.id;
     console.log(id);
-    Block.find({
-        blockeeid:id
-    }).then( blocklist =>{
-        console.log(blocklist);
-        const blockerid = blocklist.blocker_id
-        console.log(blockerid)
-        Chats.find({  
+    Chats.find({  
             sndrs_id: id     
         })
-        .sort({date: 1})
-        .then( chats => {            
-            res.status(200).json(chats) 
-        })
+    .sort({date: 1})
+    .then( chats => { 
+        res.status(200).json(chats)     
     })
 })
 

@@ -71,6 +71,10 @@
     align-items: center;
 }
 
+.sidebar__blockedChat{
+    background-color: lightpink;
+}
+
 .empty__message {
     font-size: 14px;
     color: gray;

@@ -5,9 +5,11 @@ const axios = require("axios").default;
 const { jwtCheck } = require('../../check-jwt');
 const cors = require('cors');
 
-//retrieving model
+//retrieving models
 const Users = require('../../models/Users.js');
 const Block = require('../../models/Blocklist');
+const Chats = require('../../models/Chats');
+
 
 const options = {
     method: 'GET',
@@ -96,6 +98,11 @@ router.delete('/:id', (req, res)=>{
 router.post('/block',(req,res)=>{
     const deets = req.body.options;
     console.log(deets)
+    Chats.updateMany({
+        specialkey:deets.chatSpecialKey
+    },{
+        blocked:true
+    });
     const newBlock = new Block({
 
         blocker_id :deets.blocker_id,
@@ -112,7 +119,7 @@ router.post('/block',(req,res)=>{
     .then(blockdetails => {
     console.log(blockdetails)
     console.log(`data was inserted successfully: ${blockdetails}`);
-    res.status(201).json(chatdeets);
+    res.status(201).json(blockdetails);
     }) 
     .catch(err => console.log(err));
 })
