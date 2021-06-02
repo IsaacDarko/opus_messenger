@@ -5,6 +5,7 @@ const Pusher = require('pusher');
 const { jwtCheck } = require('./check-jwt')
 const cors = require('cors');
 const dotenv = require('dotenv').config();
+const path = require('path');
 
 //initialising express
 const app = Express();
@@ -30,8 +31,23 @@ app.use('/api/messages', userMessages);
 app.use('/api/chats', userChats);
 app.use('/api/users', users);
 
+
+
+//Serve static assets if in production (to be removed later for dockerisation)
+if(process.env.NODE_ENV === 'production') {
+    //Set static folder
+    app.use(express.static('client/build'));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    })
+}
+
+
+
 //retrieving database keys and configs
 const db = require('./config/keys').mongoURI;
+const { expressJwtSecret } = require('jwks-rsa');
 const pusher = new Pusher({
     appId: "1201019",
     key: "0d81b56dcdff3b8a813c",

@@ -128,13 +128,35 @@ router.post('/block',(req,res)=>{
 //@route  DELETE api/users/unblock
 //@descr  Allows for unblocking a user using their id
 //@access Private
-router.delete('apis/users/unblock',(req,res)=>{
-    Block.findById(req.params.id)
+router.delete('/unblock/:id',(req,res)=>{
+    const id = req.params.id
+    Block.findById({
+        blockee_id:id
+    })
     .then(entry => 
         entry.remove()
         .then(() => res.status(200).json({success:true}))
-        .catch(err => console.log(err))
         )
+    .catch(err => console.log(err));
+})
+
+
+//@route  UPDATE api/users/unblock/chat
+//@descr  Allows for unblocking a user's chat using their id
+//@access Private
+router.put('/unblock/chat/:id',(req,res)=>{
+    const id = req.params.id;
+    Chats.find({
+        recpt_id:id
+    })
+    .then(entries => {
+        console.log(entries)
+        entries.forEach(entry =>{
+            entry.blocked = false;
+        })
+        res.status(200).json({success:true})
+        
+    })
     .catch(err => console.log(err));
 })
 
