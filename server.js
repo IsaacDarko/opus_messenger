@@ -36,7 +36,7 @@ app.use('/api/users', users);
 //Serve static assets if in production (to be removed later for dockerisation)
 if(process.env.NODE_ENV === 'production') {
     //Set static folder
-    app.use(express.static('client/build'));
+    app.use(Express.static('client/build'));
 
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
