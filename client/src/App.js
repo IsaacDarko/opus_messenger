@@ -173,7 +173,6 @@ function App() {
 
 
   const addNewChat = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
     console.log(user)
     const { sub } = user;
     console.log(sub);
@@ -181,54 +180,76 @@ function App() {
     axios.get(`api/users/set/${id}`)
     .then(response=>{
       const enemy = response.data;
-      console.log(enemy)
-      let blockInstances = 0;
-      enemy.forEach(() => {
-        blockInstances ++
+      console.log(enemy);
+      let enemyCount = 0;
+
+      enemy.forEach(idiot =>{
+        enemyCount++
       })
-      if( blockInstances === 0 ){
-        console.log('adduser if condition fired')
-        axios.get('api/users/sync')
-        .then(res => {         
-          const contacts = res.data
-          const contactlist = contacts.filter(contact =>
-            contact.user_id !== sub
-          )
-          console.log(contacts);
-          setContactlist(contactlist);
-          })
-      }else if(blockInstances > 0){
-        const enemy_ids = enemy.reduce(
-          (arr, elem)=> arr.concat(elem.blocker_id),[]
-          );
-        console.log(enemy_ids)
-        axios.get('api/users/sync')
-        .then(res => {
-          console.log('adduser elseif condition fired')
-          console.log(enemy_ids);
-          const contacts = res.data;
-          console.log(contacts)
-          for(let i = 0; i < enemy_ids.length; i++){
-              const enemy_id = enemy_ids[i];
-              const friends = contacts.filter(contact => 
-                contact.user_id !== enemy_id && contact.user_id !== sub
-              ) 
-              console.log(friends);
-              setContactlist(friends);
-          } 
-        }) 
+
+
+      if( enemyCount > 0){
+        let blockInstances = 0;
+        enemy.forEach(() => {
+          blockInstances ++
+        })
+        if( blockInstances === 0 ){
+          console.log('adduser if condition fired')
+          axios.get('api/users/sync')
+          .then(res => {         
+            const contacts = res.data
+            const contactlist = contacts.filter(contact =>
+              contact.user_id !== sub
+            )
+            console.log(contacts);
+            setContactlist(contactlist);
+            })
+        }else if(blockInstances > 0){
+          const enemy_ids = enemy.reduce(
+            (arr, elem)=> arr.concat(elem.blocker_id),[]
+            );
+          console.log(enemy_ids)
+          axios.get('api/users/sync')
+          .then(res => {
+            console.log('adduser elseif condition fired')
+            console.log(enemy_ids);
+            const contacts = res.data;
+            console.log(contacts)
+            for(let i = 0; i < enemy_ids.length; i++){
+                const enemy_id = enemy_ids[i];
+                const friends = contacts.filter(contact => 
+                  contact.user_id !== enemy_id && contact.user_id !== sub
+                ) 
+                console.log(friends);
+                setContactlist(friends);
+            } 
+          }) 
+        }else{
+          console.log('adduser else condition fired')
+          axios.get('api/users/sync')
+          .then(res => {         
+            const contacts = res.data
+            const contactlist = contacts.filter(contact =>
+              contact.user_id !== sub
+            )
+            console.log(contacts);
+            setContactlist(contactlist);
+            })
+        } 
+
       }else{
-        console.log('adduser else condition fired')
+        console.log('chatCount is 0')
         axios.get('api/users/sync')
-        .then(res => {         
-          const contacts = res.data
-          const contactlist = contacts.filter(contact =>
-            contact.user_id !== sub
-          )
-          console.log(contacts);
-          setContactlist(contactlist);
-          })
-      }     
+          .then(res => {         
+            const contacts = res.data
+            const contactlist = contacts.filter(contact =>
+              contact.user_id !== sub
+            )
+            console.log(contacts);
+            setContactlist(contactlist);
+            })
+      }
+    
     
     })
   }
