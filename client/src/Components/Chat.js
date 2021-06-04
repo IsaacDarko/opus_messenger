@@ -11,10 +11,10 @@ import Loading from './Loading';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 const Chat = (props) => { 
-    const { user, isAuthenticated, isLoading } = useAuth0();
+    const { user } = useAuth0();
     const [ chatId, setChatId ] = useState();
     const { currentChat } = props;
-    const { isChatId, setIsChatId } = props;
+    const { isChatId, fetchChat, messageMine } = props;
     const [endPicture, setEndPicture] = useState('');
     const [endName, setEndName] = useState('');
     const [endLastSeen, setEndLastSeen] = useState('')
@@ -22,7 +22,6 @@ const Chat = (props) => {
     console.log(user);
     console.log(messages);
     const [input, setInput] = useState("");
-    const [ currRecpt, setCurrRecpt ] = useState({});
     
 
     
@@ -30,12 +29,22 @@ const Chat = (props) => {
         console.log(currentChat)
         unlock()
         setup();
-    }, [currentChat]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentChat, isChatId]);
 
 
     useEffect(() =>{
         setup();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentChat, endPicture, endName, endLastSeen]);
+
+
+    useEffect(() =>{
+        if(!messageMine){
+            fetchChat()
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [messageMine]);
 
 
     const unlock = () =>{

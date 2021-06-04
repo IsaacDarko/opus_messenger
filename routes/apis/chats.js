@@ -39,7 +39,7 @@ router.get('/sync', (req, res)=>{
     Chats.find()
     .sort({date: -1})
     .then(response => {
-        console.log(response.data)
+        //console.log(response.data)
         res.status(200).json(response);
     })
     .catch(err => res.json({success: false}));
@@ -51,17 +51,17 @@ router.get('/sync', (req, res)=>{
 //@descr  Post a newly started chat
 //@access Private 
 router.post('/',  (req, res)=>{
-    console.log(req.body);
+    //console.log(req.body);
     const freshChat = req.body.options;
     const rawKeyFrag1 = freshChat.recpt_id;
     const rawKeyFrag2 = freshChat.sndrs_id;
     const keyfrag1String = rawKeyFrag1.split("|").pop();
     const keyfrag2String = rawKeyFrag2.split("|").pop();
-    console.log(`so we popped both ids to get key fragments and here they are: ${keyfrag1String} and ${keyfrag2String}`);
+    //console.log(`so we popped both ids to get key fragments and here they are: ${keyfrag1String} and ${keyfrag2String}`);
     const keyfrag1 = keyfrag1String;
     const keyfrag2 = keyfrag2String;    
     const chatKey = keyfrag1+keyfrag2;
-    console.log(chatKey);
+    //console.log(chatKey);
     const convo = [{
         recpt_id: freshChat.sndrs_id,
         recpt_name: freshChat.sndrs_name,
@@ -99,7 +99,7 @@ router.post('/',  (req, res)=>{
     if (err){ 
         return console.error(err);
     } else {
-        console.log(docs);
+        //console.log(docs);
         res.status(200).json("chat created")
     }
     });
@@ -113,9 +113,9 @@ router.post('/',  (req, res)=>{
 //@descr  Gets all of a particular user's chats using their id
 //@access Private
 router.get('/chat/:id', (req, res) =>{
-    console.log(req.params.keys);
+    //console.log(req.params.keys);
     const id = req.params.id;
-    console.log(id);
+    //console.log(id);
     Chats.find({  
             sndrs_id: id     
         })
@@ -131,17 +131,17 @@ router.get('/chat/:id', (req, res) =>{
 //@descr  Deletes a chat
 //@access Private
 router.delete('/:id', (req, res)=>{
-    console.log(req.params)
+    //console.log(req.params)
     const csk = req.params.id
-    console.log(csk);
+    //console.log(csk);
     Chats.deleteMany({
         specialkey:csk
     })
-    .then(chat =>
-        console.log(chat))
+    .then(chat =>{
+        //console.log(chat)
         res.status(200).json("Deleted")
+    })
     .catch((err) => {
-        console.log(err)
         res.json({success:false})
     })
 });

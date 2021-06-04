@@ -11,7 +11,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import ProtectedRoute from './auth/protected-route';
 
 function App() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
   const [ show, setShow ] = useState();
   const [contactlist, setContactlist] = useState([]);
   const [ gotId, setGotId ] = useState(false);
@@ -20,9 +20,9 @@ function App() {
   const [ messages, setMessages ] = useState([]);
   const [isChatId, setIsChatId] = useState(false);
   const [chatsExist, setChatsExist] = useState(false);
+  const [messageMine,setMessageMine] = useState(true);
   // eslint-disable-next-line no-unused-vars
   const [ loggedInUser, setLoggedInUser ] = useState({});
-  const [ myBlockees, setMyBlockees ] = useState([]);
   const [ currentChat, setCurrentChat ] = useState({});
 
   useEffect(()=>{
@@ -41,13 +41,6 @@ function App() {
   }, [useAuth0, user]);
 
 
-  const storageChecker = () => {
-    const chatidChecker =  localStorage.getItem('chatid');
-    const userChecker = localStorage.getItem('user');
-    const messagesChecker = localStorage.getItem('messages');
-
-    console.log(`Okay so these are your local storage variables-- chatid:${chatidChecker}, user details:${userChecker}, messages:${messagesChecker}`)
-  }
 
 
 
@@ -87,23 +80,6 @@ function App() {
 
 
 
-  const retrieveUsersMessages = () =>{
-    const myself = user
-    console.log(myself)
-    const id = myself.name;
-    console.log(id);
-    axios.get(`api/messages/${id}`)
-    .then(responses =>{
-      const responseData = responses.data
-      console.log(responseData);
-      const res = responseData.filter((response)=>{
-          return { senderid:id }
-      })
-      console.log(res);
-      setMessages(responses.data)
-      console.log(messages);
-    }).catch(err => console.log(`there was an API Error ${err}`));
-  }
 
 
 
@@ -143,7 +119,7 @@ function App() {
       console.log(`alright so these are new blockeeid: ${blockeeid} and their name is ${blockeename}`);
       alert("Blocked")
     })
-    .catch(err => console.log('Block Attempt Failed'))
+    .catch(() => console.log('Block Attempt Failed'))
   }
 
 
@@ -207,7 +183,7 @@ function App() {
       const enemy = response.data;
       console.log(enemy)
       let blockInstances = 0;
-      enemy.forEach(foe => {
+      enemy.forEach(() => {
         blockInstances ++
       })
       if( blockInstances === 0 ){
@@ -270,7 +246,7 @@ function App() {
         console.log(response.data)
         localStorage.removeItem('selectedUser');
         const newChatId = response.data._id;
-        const newChatName = response.data.recptdispName;
+        // eslint-disable-next-line no-unused-vars
         console.log(newChatId);
         alert(`New Chat Created`);
         window.location.reload(false);
@@ -286,11 +262,12 @@ function App() {
   const deleteNow = () => {
     const rawId = localStorage.getItem('selectedDel');
     console.log(rawId);
-    const id = rawId.replace(/^"(.*)"$/, '$1');
+    const id = rawId.replace(/^"(.*)"$/, '$1'); //removes double quotes from a string 
     axios.delete(`api/chats/${id}`)
     .then(res => {
       console.log(res)
       alert(res.data)
+      setIsChatId(false);
       retrieveUsersChats()
     })
   }
@@ -298,7 +275,7 @@ function App() {
 
 
 
-
+//Almighty pusher-useEffect function...the main engine for the messaging system
   useEffect(() =>{
     const pusher = new Pusher('0d81b56dcdff3b8a813c', {
       cluster: 'mt1'
@@ -309,7 +286,13 @@ function App() {
 
     messageChannel.bind('inserted', function(newMessage) {
       setMessages([...messages, newMessage]);
-      console.log(newMessage)      
+      console.log(newMessage)
+      const myId = user.sub;
+      console.log(myId)
+      console.log(newMessage.id);
+      if(newMessage.id !== myId){
+        setMessageMine();
+      }
     });
     chatChannel.bind('inserted', function(newChat) {
       setChats([...chats, newChat]);
@@ -323,6 +306,7 @@ function App() {
       chatChannel.unsubscribe();
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[messages, chats]);
 
   console.log(messages);
@@ -344,7 +328,7 @@ function App() {
 
                 <StartChatModal contactlist={contactlist} show={show} setShow={setShow} switchOff={switchOff} selectUser={selectUser} />
                 <Sidebar isChatId={isChatId} setIsChatId={setIsChatId} unblockUser={unblockUser} chatsExist={chatsExist} setChatsExist={setChatsExist} chatRejuvinate={chatRejuvinate}  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
-                <Chat isChatId={isChatId} setIsChatId={setIsChatId} chatId={chatId} setChatId={setChatId} chatRejuvinate={chatRejuvinate} currentChat={currentChat} messages={messages} user={user} chats={chats} setMessages={setMessages} />
+                <Chat messageMine={messageMine} isChatId={isChatId} setIsChatId={setIsChatId} chatId={chatId} setChatId={setChatId} chatRejuvinate={chatRejuvinate} currentChat={currentChat} messages={messages} user={user} chats={chats} setMessages={setMessages} fetchChat={fetchChat} />
                 
               </ProtectedRoute>
               

@@ -103,7 +103,7 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
 //function to unlock the sidebar is user is validated
     const unlock = () =>{
         if( chats === [] || chats === undefined ){
-            setChatsExist(false);
+            setChatsExist();
             console.log('Sidebar Unlock Failed...No chats exist in this account')
         }else{
             setChatsExist(true);

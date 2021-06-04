@@ -50,7 +50,7 @@ router.get('/sync', (req, res)=>{
 //@access Private
 router.get('/:id', (req, res)=>{ 
     const id = req.params.id
-    console.log(id);
+    //console.log(id);
     UserMessage.find({
         sendername: id
 
@@ -67,18 +67,18 @@ router.get('/:id', (req, res)=>{
 //@descr  Gets all messages in a particular chat
 //@access Private
 router.get('/chat/:id', (req, res)=>{
-    console.log(req.params);
+    //console.log(req.params);
     const id =  req.params.id;
-    console.log(id);
+    //console.log(id);
     UserMessage.find({
         chatspecialkey:id
     }).sort({date: -1})
     .then(chatmessages => {
-        console.log(chatmessages);
+        //console.log(chatmessages);
         res.status(200).json(chatmessages);
     })
     .catch(err=> {
-        console.log(err);
+        //console.log(err);
         res.status(400).json("Sorry that was bad request")
     })
 })
@@ -92,7 +92,7 @@ router.get('/chat/:id', (req, res)=>{
 //@descr  Post a user message
 //@access Private
 router.post('/', (req, res)=>{
-    console.log(req.body)
+    //console.log(req.body)
     const newUserMessage = new UserMessage({
         chatid: req.body.chatid,
         message: req.body.message,
@@ -107,7 +107,7 @@ router.post('/', (req, res)=>{
         blocker_name: req.body.receivername 
     })
     .then(blockStats => {
-        console.log(blockStats)
+        //console.log(blockStats)
         let speckey = ""
         let csks = [];
         let instances = 0;
@@ -117,8 +117,8 @@ router.post('/', (req, res)=>{
             csks.push(blockStat.chatspecialkey)
         });
         const csk = findDuplicates(csks)
-        console.log(csk);
-        console.log(instances)
+        //console.log(csk);
+        //console.log(instances)
         const pairkey = csk.forEach(key => {
             speckey.concat(key)
         })
@@ -126,7 +126,7 @@ router.post('/', (req, res)=>{
             newUserMessage.save()
             .then(usermessage => {
                 res.status(200).json(usermessage)
-                console.log("data inserted successfully");
+                //console.log("data inserted successfully");
             })
         }else if(instances > 0){
             console.log('blocked')
