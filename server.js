@@ -17,8 +17,8 @@ app.use(Express.urlencoded({ extended: false }));
 //setting up headers using cors package
 app.use(cors());
 
-//api health test for debugging during deployment
-app.get("/", (req, res)=> res.status(200).send("Hello there"));
+//api health test for debugging during development
+//app.get("/", (req, res)=> res.status(200).send("Hello there"));
 
 //setting up routes
 const userMessages = require('./routes/apis/usermessage');
