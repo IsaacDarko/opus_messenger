@@ -20,6 +20,18 @@ app.use(cors());
 //api health test for debugging during development
 //app.get("/", (req, res)=> res.status(200).send("Hello there"));
 
+//Serve static assets if in production (to be removed later for dockerisation)
+if(process.env.NODE_ENV === 'production') {
+    //Set static folder
+    app.use(Express.static('client/build'));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    })
+}
+
+
+
 //setting up routes
 const userMessages = require('./routes/apis/usermessage');
 const userChats = require('./routes/apis/chats.js');
@@ -32,16 +44,6 @@ app.use('/api/chats', userChats);
 app.use('/api/users', users);
 
 
-
-//Serve static assets if in production (to be removed later for dockerisation)
-if(process.env.NODE_ENV === 'production') {
-    //Set static folder
-    app.use(Express.static('client/build'));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-    })
-}
 
 
 
