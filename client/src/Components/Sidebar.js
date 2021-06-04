@@ -7,18 +7,18 @@ import  ChatIcon from '@material-ui/icons/Chat';
 import  SearchOutlined from '@material-ui/icons/SearchOutlined';
 import  MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import BlockIcon from '@material-ui/icons/Block';
 import { useAuth0 } from '@auth0/auth0-react'
 
 
-function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvinate, retrieveUsersChats, deleteNow }) {
+function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvinate, retrieveUsersChats, deleteNow, unblockUser }) {
 //declaring state holders for the selectchat function variables
     const [chatid, setChatid] = useState('');
     const [ currUserId, setCurrUserId ] = useState('');
     const [ currUserName, setCurrUserName ] = useState('');
     const [ currUserDisp, setCurrUserDisp ] = useState('');
     const [ currUserMail, setCurrUserMail ] = useState('');
-    const [ isChatId, setIsChatId ] = useState();
     const [ chatSpecialKey, setChatSpecialKey ] = useState('');
     const [ currentUserPic,setCurrentUserPic ] = useState('');
 
@@ -32,6 +32,8 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
     const [blockedSpecialKey, setBlockedSpecialKey] = useState('');
     const [blockerDispName, setBlockerDispName] = useState('');
     const [blockeeDispName, setBlockeeDispName] = useState('');
+    const [unblockId, setUnblockId] = useState('');
+    const [unblockClicked, setUnblockClicked] = useState(false);
 
 //declaring state holders for the delete callback function variables
     const [ selectedId, setSelectedId ] = useState('');
@@ -59,9 +61,9 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
         const endangeredItem = localStorage.setItem('selectedDel', JSON.stringify(selectedId));
         const checker = localStorage.getItem('selectedDel');
         console.log(checker);
-        console.log('delete function run without being called again')
-        deleteNow();
+        console.log('delete function run without being called again');
         setDeleteClicked(false);
+        deleteNow();
     }
 
 
@@ -82,16 +84,29 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
         console.log(blockCert);
         const endangeredItem = localStorage.setItem('selectedBlock', JSON.stringify(blockCert));
         console.log(endangeredItem);
-        blockUser()
+        setBlockClicked(false);
+        blockUser();
     }
+
+
+    //function for triggering the url call to block a user from the sidebar chat elements
+    const acquireRedeemed = () =>{
+        const redeemedId = unblockId;
+        const redeemed = localStorage.setItem('unblockeeId', JSON.stringify(redeemedId));
+        console.log(redeemed);
+        setUnblockClicked(false);
+        unblockUser()
+    }
+
+
 
 //function to unlock the sidebar is user is validated
     const unlock = () =>{
         if( chats === [] || chats === undefined ){
-            setIsChatId(false);
+            setChatsExist(false);
             console.log('Sidebar Unlock Failed...No chats exist in this account')
         }else{
-            setIsChatId(true);
+            setChatsExist(true);
             console.log('Sidebar Unlock Successful')
         }
     }
@@ -123,12 +138,24 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
 //useEffect to trigger the blockuser sequence when the block button is clicked
     useEffect(() =>{
         if(blockClicked === true){
+            acquireExile();
             const doomedItem = JSON.parse(localStorage.getItem('selectedBlock'));
             console.log(doomedItem);
-            acquireExile();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [blockClicked]);
+
+
+
+//useEffect to trigger the unblockuser sequence when the unblock button is clicked
+    useEffect(() =>{
+        if(unblockClicked === true){
+            const redeemedItem = JSON.parse(localStorage.getItem('unblockeeId'));
+            console.log(redeemedItem);
+            acquireRedeemed();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [unblockClicked]);
 
 
 
@@ -165,7 +192,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
 
 
 //Render Sidebar
-    return !isChatId ? (
+    return !chatsExist ? (
         <div className="sidebar">
             <div className="sidebar__header">
                 <Avatar src={picture} />
@@ -239,6 +266,7 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
                     setCurrUserMail(chat.recpt_mail)
                     setChatSpecialKey(chat.specialkey)
                     setCurrentUserPic(chat.recptdispPic)
+                    setIsChatId(true)
                 }}>
                         <h2>{chat.recptdispName}</h2>
                         <p>{chat.recpt_mail}</p>
@@ -251,20 +279,43 @@ function Sidebar({ setShow, chats, fetchChat, addNewChat, blockUser, chatRejuvin
                                 setDeleteClicked(true)
                                 }}/></span> 
 
-                            <span id={chat._id} className="chat__block"> <BlockIcon onClick={(e) => {
+                            <span id={chat._id} className="chat__block"> 
+                                <BlockIcon onClick={(e) => {
+                                //selecting the user in readiness to block
+                                    setChatid(chat._id)
+                                    setCurrUserId(chat.recpt_id)
+                                    setCurrUserName(chat.recpt_name)
+                                    setCurrUserDisp(chat.recptdispName)
+                                    setCurrUserMail(chat.recpt_mail)
+                                    setChatSpecialKey(chat.specialkey)
+                                    setCurrentUserPic(chat.recptdispPic)
                                 console.log(`this is the id of who you just blocked: ${chat.recpt_id}`);
-                                //prepping state to fire block function
-                                setBlockerId(chat.sndrs_id)
-                                setBlockeeId(chat.recpt_id)
-                                setBlockername(chat.sndrs_name)
-                                setBlockeename(chat.recpt_name)
-                                setBlockermail(chat.sndrs_mail)
-                                setBlockeemail(chat.recpt_mail)
-                                setBlockerDispName(chat.sndrsdispName)
-                                setBlockeeDispName(chat.recptdispName)
-                                setBlockedSpecialKey(chat.specialkey)
-                                setBlockClicked(true)
-                                }} /> </span>
+                                //prepping the required state to fire block function
+                                    setBlockerId(chat.sndrs_id)
+                                    setBlockeeId(chat.recpt_id)
+                                    setBlockername(chat.sndrs_name)
+                                    setBlockeename(chat.recpt_name)
+                                    setBlockermail(chat.sndrs_mail)
+                                    setBlockeemail(chat.recpt_mail)
+                                    setBlockerDispName(chat.sndrsdispName)
+                                    setBlockeeDispName(chat.recptdispName)
+                                    setBlockedSpecialKey(chat.specialkey)
+                                    setBlockClicked(true)
+                                }} /> 
+                                
+                                <RemoveCircleOutlineIcon onClick={(e) => {
+                                    setChatid(chat._id)
+                                    setCurrUserId(chat.recpt_id)
+                                    setCurrUserName(chat.recpt_name)
+                                    setCurrUserDisp(chat.recptdispName)
+                                    setCurrUserMail(chat.recpt_mail)
+                                    setChatSpecialKey(chat.specialkey)
+                                    setCurrentUserPic(chat.recptdispPic)
+                                    setUnblockId(chat.recpt_id);
+                                    setUnblockClicked(true);
+                                    console.log(`this is the id of who you just unblocked: ${chat.recpt_id}`);
+                                }}/>
+                                </span>
                     </div> 
                     
                 </div>

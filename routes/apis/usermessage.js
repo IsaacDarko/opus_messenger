@@ -6,9 +6,25 @@ const cors = require('cors');
 
 //retrieving model
 const UserMessage = require('../../models/UserMessage');
+const Users = require('../../models/Users.js');
+const Block = require('../../models/Blocklist');
+const Chats = require('../../models/Chats');
 
 //initialising express
 const app = Express();
+
+//helper function
+const findDuplicates = (arr) => {
+    let sorted_arr = arr.slice().sort();
+    let results = [];
+    for (let i = 0; i < sorted_arr.length - 1; i++) {
+        if (sorted_arr[i + 1] == sorted_arr[i]) {
+            results.push(sorted_arr[i]);
+        }
+    }
+    return results;
+}
+
 
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: false }));
@@ -86,12 +102,41 @@ router.post('/', (req, res)=>{
         receivername: req.body.receivername,
         chatspecialkey: req.body.chatSpecialKey,
         receiverdispname: req.body.receiverdispname
-
     });
-    newUserMessage.save()
-    .then(usermessage => {res.status(201).json(usermessage)
-    console.log("data inserted successfully");
-    }).catch(err => console.log(err));
+    Block.find({
+        blocker_name: req.body.receivername 
+    })
+    .then(blockStats => {
+        console.log(blockStats)
+        let speckey = ""
+        let csks = [];
+        let instances = 0;
+        
+        blockStats.forEach(blockStat =>{
+            instances++;
+            csks.push(blockStat.chatspecialkey)
+        });
+        const csk = findDuplicates(csks)
+        console.log(csk);
+        console.log(instances)
+        const pairkey = csk.forEach(key => {
+            speckey.concat(key)
+        })
+        if( pairkey !== req.body.chatSpecialKey && instances === 0 ){
+            newUserMessage.save()
+            .then(usermessage => {
+                res.status(200).json(usermessage)
+                console.log("data inserted successfully");
+            })
+        }else if(instances > 0){
+            console.log('blocked')
+            res.status(208).json('This user has blocked you')
+        }else{
+            console.log('something went wrong')
+        }
+    })
+    
+
 });
 
 

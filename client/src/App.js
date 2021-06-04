@@ -18,12 +18,12 @@ function App() {
   const [chatId, setChatId] = useState('');
   const [ chats, setChats ] = useState([]);
   const [ messages, setMessages ] = useState([]);
+  const [isChatId, setIsChatId] = useState(false);
+  const [chatsExist, setChatsExist] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [ loggedInUser, setLoggedInUser ] = useState({});
   const [ myBlockees, setMyBlockees ] = useState([]);
-  const [ currentChat, setCurrentChat ] = useState({
-    name:'Name', picutue:'', last_login:'today'
-  });
+  const [ currentChat, setCurrentChat ] = useState({});
 
   useEffect(()=>{
     console.log(user)
@@ -147,6 +147,27 @@ function App() {
   }
 
 
+  const unblockUser = () =>{
+    const userid = localStorage.getItem('unblockeeId');
+    const id = userid.replace(/^"(.*)"$/, '$1');
+    console.log(id);
+    axios.delete(`api/users/unblock/${id}`)
+    .then(res => {
+      if (res.status === 200){
+        axios.put(`api/users/unblock/chat/${id}`)
+        .then(response =>{
+          console.log(res)
+          if(response.status === 200){
+              alert('user unblocked')
+          }else(
+            console.log('There was a problem unblocking this user')
+          )
+        })
+      }
+    })
+  }
+
+
   
   const fetchChat = () => {
     const id = localStorage.getItem('chatid');
@@ -185,7 +206,12 @@ function App() {
     .then(response=>{
       const enemy = response.data;
       console.log(enemy)
-      if( enemy !== [] ){
+      let blockInstances = 0;
+      enemy.forEach(foe => {
+        blockInstances ++
+      })
+      if( blockInstances === 0 ){
+        console.log('adduser if condition fired')
         axios.get('api/users/sync')
         .then(res => {         
           const contacts = res.data
@@ -195,13 +221,14 @@ function App() {
           console.log(contacts);
           setContactlist(contactlist);
           })
-      }else{
+      }else if(blockInstances > 0){
         const enemy_ids = enemy.reduce(
           (arr, elem)=> arr.concat(elem.blocker_id),[]
           );
         console.log(enemy_ids)
         axios.get('api/users/sync')
         .then(res => {
+          console.log('adduser elseif condition fired')
           console.log(enemy_ids);
           const contacts = res.data;
           console.log(contacts)
@@ -214,8 +241,18 @@ function App() {
               setContactlist(friends);
           } 
         }) 
-      }
-      
+      }else{
+        console.log('adduser else condition fired')
+        axios.get('api/users/sync')
+        .then(res => {         
+          const contacts = res.data
+          const contactlist = contacts.filter(contact =>
+            contact.user_id !== sub
+          )
+          console.log(contacts);
+          setContactlist(contactlist);
+          })
+      }     
     
     })
   }
@@ -235,6 +272,8 @@ function App() {
         const newChatId = response.data._id;
         const newChatName = response.data.recptdispName;
         console.log(newChatId);
+        alert(`New Chat Created`);
+        window.location.reload(false);
       })
       .catch(err => console.log(err))
       }else{
@@ -304,8 +343,8 @@ function App() {
               <ProtectedRoute exact path="/" component={Chat}>
 
                 <StartChatModal contactlist={contactlist} show={show} setShow={setShow} switchOff={switchOff} selectUser={selectUser} />
-                <Sidebar chatid={chatId} setChatId={setChatId} chatRejuvinate={chatRejuvinate}  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
-                <Chat chatId={chatId} setChatId={setChatId} chatRejuvinate={chatRejuvinate} currentChat={currentChat} messages={messages} user={user} chats={chats} setMessages={setMessages} />
+                <Sidebar isChatId={isChatId} setIsChatId={setIsChatId} unblockUser={unblockUser} chatsExist={chatsExist} setChatsExist={setChatsExist} chatRejuvinate={chatRejuvinate}  retrieveUsersChats={retrieveUsersChats}  blockUser={blockUser} chats={chats} user={user} show={show} setShow={setShow} addNewChat={addNewChat} fetchChat={fetchChat} contactlist={contactlist} deleteNow={deleteNow} gotId={gotId} setGotId={setGotId} />
+                <Chat isChatId={isChatId} setIsChatId={setIsChatId} chatId={chatId} setChatId={setChatId} chatRejuvinate={chatRejuvinate} currentChat={currentChat} messages={messages} user={user} chats={chats} setMessages={setMessages} />
                 
               </ProtectedRoute>
               

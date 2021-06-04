@@ -112,8 +112,8 @@ router.post('/block',(req,res)=>{
         blocker_mail :deets.blocker_mail,
         blockee_mail :deets.blockee_mail,
         blocker_dispName :deets.blocker_dispName,
-        blockee_dispName :deets.blockee_dispName
-
+        blockee_dispName :deets.blockee_dispName,
+        chatspecialkey : deets.chatSpecialKey
     })
     newBlock.save()
     .then(blockdetails => {
@@ -130,14 +130,14 @@ router.post('/block',(req,res)=>{
 //@access Private
 router.delete('/unblock/:id',(req,res)=>{
     const id = req.params.id
-    Block.findById({
+    Block.deleteMany({
         blockee_id:id
     })
-    .then(entry => 
-        entry.remove()
-        .then(() => res.status(200).json({success:true}))
-        )
-    .catch(err => console.log(err));
+    .then(entry => {
+        console.log(entry);
+        res.status(200).json({success:true})
+    })
+    .catch(err => console.log({success:false}));
 })
 
 
@@ -145,6 +145,7 @@ router.delete('/unblock/:id',(req,res)=>{
 //@descr  Allows for unblocking a user's chat using their id
 //@access Private
 router.put('/unblock/chat/:id',(req,res)=>{
+    console.log(req.params);
     const id = req.params.id;
     Chats.find({
         recpt_id:id
@@ -155,9 +156,10 @@ router.put('/unblock/chat/:id',(req,res)=>{
             entry.blocked = false;
         })
         res.status(200).json({success:true})
-        
+        console.log(res.status);
+
     })
-    .catch(err => console.log(err));
+    .catch(err => console.log({success:false}));
 })
 
 

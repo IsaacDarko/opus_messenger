@@ -22,13 +22,11 @@ const BlocklistSchema = new Schema({
     },
     blocker_mail:{
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     blockee_mail:{
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     blocker_dispName:{
         type: String,
@@ -42,6 +40,10 @@ const BlocklistSchema = new Schema({
         type: String,
         required:false,
         unique: true
+    },
+    chatspecialkey:{
+        type: String,
+        required: true
     },
     reason:{
         type: String,

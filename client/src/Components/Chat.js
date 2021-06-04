@@ -12,8 +12,9 @@ import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 const Chat = (props) => { 
     const { user, isAuthenticated, isLoading } = useAuth0();
-    const { chatId } = props;
+    const [ chatId, setChatId ] = useState();
     const { currentChat } = props;
+    const { isChatId, setIsChatId } = props;
     const [endPicture, setEndPicture] = useState('');
     const [endName, setEndName] = useState('');
     const [endLastSeen, setEndLastSeen] = useState('')
@@ -22,18 +23,14 @@ const Chat = (props) => {
     console.log(messages);
     const [input, setInput] = useState("");
     const [ currRecpt, setCurrRecpt ] = useState({});
-    const [ isChatId, setIsChatId ] = useState();
     
 
     
     useEffect(() =>{
+        console.log(currentChat)
         unlock()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-        const current = JSON.parse(localStorage.getItem('currentUser'));
-        console.log(current.picture);
-        setCurrRecpt(current);
         setup();
-    }, []);
+    }, [currentChat]);
 
 
     useEffect(() =>{
@@ -42,11 +39,12 @@ const Chat = (props) => {
 
 
     const unlock = () =>{
-        if( chatId === undefined ){
-            console.log(isChatId);
+        console.log(isChatId)
+        if( isChatId === false ){
+            setChatId()
             console.log('ChatPage Unlock Failed...No chats exist in this account')
         }else{
-            setIsChatId(true);
+            setChatId(true);
             console.log('ChatPage Unlock Successful')
         }
     }
@@ -88,7 +86,14 @@ const Chat = (props) => {
                 chatSpecialKey: specialkey
                 
             }).then( response =>{
-                setInput("");
+                console.log(response);
+                if(response.status === 208){
+                    alert('This User Has Blocked You')
+                }else if(response.status === 200){
+                    setInput("");
+                }else{
+                    console.log(`Something's not right the message was not sent`)
+                }
             })
             .catch(err => console.log(err))
 
