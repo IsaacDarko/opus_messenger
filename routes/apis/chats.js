@@ -122,7 +122,7 @@ router.get('/chat/:id', (req, res) =>{
     .sort({date: 1})
     .then( chats => { 
         res.status(200).json(chats)     
-    })
+    }).catch(err => console.log(err))
 })
 
 

@@ -42,7 +42,12 @@ const Chat = (props) => {
     useEffect(() =>{
         if(!messageMine){
             fetchChat()
+        }else if(messageMine === true){
+            fetchChat()
+        }else{
+            window.location.reload(false);
         }
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messageMine]);
 

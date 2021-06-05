@@ -102,6 +102,7 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
 
 //function to unlock the sidebar is user is validated
     const unlock = () =>{
+        console.log(chats)
         let chatCount = 0;
         chats.forEach(chat =>{
             chatCount++
@@ -126,7 +127,7 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
     useEffect(() =>{
         unlock()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [chats]);
 
 
 

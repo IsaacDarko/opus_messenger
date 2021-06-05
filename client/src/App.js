@@ -182,12 +182,9 @@ function App() {
       const enemy = response.data;
       console.log(enemy);
       let enemyCount = 0;
-
       enemy.forEach(idiot =>{
         enemyCount++
       })
-
-
       if( enemyCount > 0){
         let blockInstances = 0;
         enemy.forEach(() => {
@@ -269,6 +266,7 @@ function App() {
         const newChatId = response.data._id;
         // eslint-disable-next-line no-unused-vars
         console.log(newChatId);
+        setIsChatId(true)
         alert(`New Chat Created`);
         window.location.reload(false);
       })
@@ -309,10 +307,13 @@ function App() {
       setMessages([...messages, newMessage]);
       console.log(newMessage)
       const myId = user.sub;
-      console.log(myId)
-      console.log(newMessage.id);
-      if(newMessage.id !== myId){
+      const myName = user.name;
+      console.log(myName)
+      console.log(newMessage.name);
+      if(newMessage.name !== myName){
         setMessageMine();
+      }else{
+        setMessageMine(true)
       }
     });
     chatChannel.bind('inserted', function(newChat) {
