@@ -21,7 +21,7 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
     const [ currUserMail, setCurrUserMail ] = useState('');
     const [ chatSpecialKey, setChatSpecialKey ] = useState('');
     const [ currentUserPic,setCurrentUserPic ] = useState('');
-
+    const [ chatter, setChatter ] = useState('');
 //declaring state holders for the block url trigger function variables
     const [blockerId, setBlockerId] = useState('');
     const [blockeeId, setBlockeeId] = useState('');
@@ -38,15 +38,18 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
 //declaring state holders for the delete callback function variables
     const [ selectedId, setSelectedId ] = useState('');
     const [ deleteClicked, setDeleteClicked ] = useState(false)
-
 //declaring state holders for the block callback function variables
     const [ blockClicked, setBlockClicked ] = useState(false);
-    
 //destructuring the valid users details from the Auth0 hook and saving to variable "user"
     const { user } = useAuth0();
     const { picture } = user;
-
     console.log(user);
+
+    useEffect(()=>{
+        if(chats !== []){
+            setChatter(chats)
+        }
+    }, [chats])
 
 //useEffect for selecting a particular chat
     useEffect(()=>{
@@ -103,6 +106,7 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
 //function to unlock the sidebar is user is validated
     const unlock = () =>{
         console.log(chats)
+        console.log('chats dey here')
         let chatCount = 0;
         chats.forEach(chat =>{
             chatCount++
@@ -125,9 +129,10 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
 
 //useEffect to trigger unlocking the sidebar if user is validated
     useEffect(() =>{
+        console.log('chatter was populated by chat')
         unlock()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chats]);
+    }, [chatter]);
 
 
 

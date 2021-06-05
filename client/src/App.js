@@ -305,8 +305,7 @@ function App() {
 
     messageChannel.bind('inserted', function(newMessage) {
       setMessages([...messages, newMessage]);
-      console.log(newMessage)
-      const myId = user.sub;
+      console.log(newMessage);
       const myName = user.name;
       console.log(myName)
       console.log(newMessage.name);

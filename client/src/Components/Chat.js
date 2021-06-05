@@ -128,7 +128,7 @@ const Chat = (props) => {
 
                         <div className="chat__headerInfo">
                             <h3>Name</h3>
-                            <p><h5>Last Seen: </h5>....</p>
+                            <h5>Last Seen: ...</h5>
                         </div>
 
                         <div className="chat__headerRight">
