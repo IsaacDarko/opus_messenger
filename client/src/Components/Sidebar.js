@@ -106,16 +106,17 @@ function Sidebar({ chatId, setIsChatId, chatsExist, setChatsExist, setShow, chat
 //function to unlock the sidebar is user is validated
     const unlock = () =>{
         console.log(chats)
-        console.log('chats dey here')
         let chatCount = 0;
-        chats.forEach(chat =>{
+        for(let i =0, len = chats.length; i < len; i++){
             chatCount++
-        })
+        }
         console.log(chats)
         if( chatCount === 0 ){
+            console.log('0 chats dey')
             setChatsExist();
             console.log('Sidebar Unlock Failed...No chats exist in this account')
         }else if( chatCount > 0 ){
+            console.log('chats dey here')
             setChatsExist(true);
             console.log('Sidebar Unlock Successful')
         }
