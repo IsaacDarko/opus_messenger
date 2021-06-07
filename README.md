@@ -2,8 +2,8 @@
 A live chat messenger system built on the MERN stack, with partial devops functionality
 
 Setup Scripts<br/>
- npm run client ---- Starts the client server <br/>
- npm run server ---- Starts the server with change monitoring<br/>
+ npm run client ---- Starts the front end client server <br/>
+ npm run server ---- Starts the backend api server with change monitoring<br/>
  npm install ------- Install all the dependencies needed for the app to run<br/>
  npm run dev ------- set a concurrent console which runs both front end and back end simultaneously (Useful for dev purposes on a local machine)<br/>
  npm run heroku-postbuild ---- initiates the production build, ie. it compiles the the react front-end automatically and pushes both front and backend to heroku<br/><br/>
