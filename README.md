@@ -2,7 +2,7 @@
 A live chat messenger system built on the MERN stack, with partial devops functionality
 
 Setup Scripts<br/>
- npm run client ---- Starts the client server on port 3000<br/>
+ npm run client ---- Starts the client server <br/>
  npm run server ---- Starts the server with change monitoring<br/>
  npm install ------- Install all the dependencies needed for the app to run<br/>
  npm run dev ------- set a concurrent console which runs both front end and back end simultaneously (Useful for dev purposes on a local machine)<br/>
