@@ -12,7 +12,7 @@ Setup Scripts<br/>
 The application is a single page app, but all modern react methods and practices are implemented to ensure that it run perfectly. It uses both react functional and arrow functions to optimize performance. Auth0 for react is used to provide an authentication layer and is also used to handle all end user functionality.<br/><br/>
 
 
-Features<br/><br/>
+Features<br/>
 User Registration<br/>
 User Login/Logout<br/>
 User Validation for secured api endpoints<br/>
