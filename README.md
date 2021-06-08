@@ -1,5 +1,4 @@
 # opus_messenger
-A live chat messenger system built on the MERN stack, with partial devops functionality
 
 <h4>Setup Scripts</h4><br/>
  npm run client ---- Starts the front end client server <br/>
@@ -7,10 +6,6 @@ A live chat messenger system built on the MERN stack, with partial devops functi
  npm install ------- Install all the dependencies needed for the app to run<br/>
  npm run dev ------- set a concurrent console which runs both front end and back end simultaneously (Useful for dev purposes on a local machine)<br/>
  npm run heroku-postbuild ---- initiates the production build, ie. it compiles the the react front-end automatically and pushes both front and backend to heroku<br/><br/>
- 
- 
-The application is a single page app, with all modern react methods and practices implemented to ensure that it runs in an optimal manner. As well as modern UI designs seen in most current app, implementd using Material UI for react. It uses both react functional and arrow functions to optimize performance. Auth0 for react is used to provide an authentication layer and is also used to handle all end user functionality.<br/><br/><br/><br/><br/>
-
 
 <h4>Features</h4><br/>
 User Registration<br/>
